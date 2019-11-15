@@ -1,0 +1,27 @@
+{
+    "Equals": {
+        "Variable": "$.value",
+        "StringEquals": "Lorem ipsum dolor sit amet",
+        "Next": "NextState"
+    },
+    "LessThan": {
+        "Variable": "$.value",
+        "StringLessThan": "Lorem ipsum dolor sit amet",
+        "Next": "NextState"
+    },
+    "LessThanEquals": {
+        "Variable": "$.value",
+        "StringLessThanEquals": "Lorem ipsum dolor sit amet",
+        "Next": "NextState"
+    },
+    "GreaterThan": {
+        "Variable": "$.value",
+        "StringGreaterThan": "Lorem ipsum dolor sit amet",
+        "Next": "NextState"
+    },
+    "GreaterThanEquals": {
+        "Variable": "$.value",
+        "StringGreaterThanEquals": "Lorem ipsum dolor sit amet",
+        "Next": "NextState"
+    }
+}

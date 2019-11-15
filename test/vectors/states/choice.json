@@ -1,0 +1,38 @@
+{
+    "ChoiceStateX": {
+        "Type" : "Choice",
+        "Choices": [
+            {
+                "Not": {
+                    "Variable": "$.type",
+                    "StringEquals": "Private"
+                },
+                "Next": "Public"
+            },
+            {
+                "And": [
+                    {
+                        "Variable": "$.value",
+                        "NumericGreaterThanEquals": 20
+                    },
+                    {
+                        "Variable": "$.value",
+                        "NumericLessThan": 30
+                    }
+                ],
+                "Next": "ValueInTwenties"
+            },
+            {
+                "Variable": "$.value",
+                "BooleanEquals": true,
+                "Next": "TrueState"
+            },
+            {
+                "Variable": "$.value",
+                "TimestampLessThan": "1999-09-13T13:00:21+00:00",
+                "Next": "PartyTime"
+            }
+        ],
+        "Default": "DefaultState"
+    }
+}

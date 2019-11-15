@@ -1,0 +1,53 @@
+{
+    "Comment": "Artifact Builder",
+    "StartAt": "ParseRequirements",
+    "States": {
+        "ParseRequirements": {
+            "Type": "Task",
+            "Resource": "arn:aws:lambda:us-east-1:123456789012:function:parse-requirements",
+            "Next": "SelectLanguage"
+        },
+        "SelectLanguage": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "Variable": "$.Language",
+                    "StringEquals": "python",
+                    "Next": "BuildPython"
+                }
+            ],
+            "Default": "UnknownLanguage"
+        },
+        "UnknownLanguage": {
+            "Type": "Fail",
+            "Cause": "Invalid language"
+        },
+        "BuildPython": {
+            "Type": "Parallel",
+            "Branches": [
+                {
+                    "StartAt": "BuildPython36",
+                    "States": {
+                        "BuildPython36": {
+                            "Type": "Task",
+                            "Resource": "arn:aws:lambda:us-east-1:123456789012:function:build-py36",
+                            "End": true
+                        }
+                    }
+                },
+                {
+                    "StartAt": "BuildPython37",
+                    "States": {
+                        "BuildPython37": {
+                            "Type": "Task",
+                            "Resource": "arn:aws:lambda:us-east-1:123456789012:function:build-py37",
+                            "End": true
+                        }
+                    }
+                }
+            ],
+            "ResultPath": "$.BuildResults",
+            "End": true
+        }
+    }
+}

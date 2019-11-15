@@ -1,0 +1,52 @@
+{
+    "EqualsDate": {
+        "Variable": "$.value",
+        "TimestampEquals": "2016-12-01T00:00:00+00:00",
+        "Next": "NextState"
+    },
+    "EqualsDateTime": {
+        "Variable": "$.value",
+        "TimestampEquals": "2016-12-01T15:07:07-08:00",
+        "Next": "NextState"
+    },
+    "GreaterThanDate": {
+        "Variable": "$.value",
+        "TimestampGreaterThan": "2016-12-01T00:00:00+00:00",
+        "Next": "NextState"
+    },
+    "GreaterThanDateTime": {
+        "Variable": "$.value",
+        "TimestampGreaterThan": "2016-12-01T15:07:07-08:00",
+        "Next": "NextState"
+    },
+    "GreaterThanEqualsDate": {
+        "Variable": "$.value",
+        "TimestampGreaterThanEquals": "2016-12-01T00:00:00+00:00",
+        "Next": "NextState"
+    },
+    "GreaterThanEqualsDateTime": {
+        "Variable": "$.value",
+        "TimestampGreaterThanEquals": "2016-12-01T15:07:07-08:00",
+        "Next": "NextState"
+    },
+    "LessThanDate": {
+        "Variable": "$.value",
+        "TimestampLessThan": "2016-12-01T00:00:00+00:00",
+        "Next": "NextState"
+    },
+    "LessThanDateTime": {
+        "Variable": "$.value",
+        "TimestampLessThan": "2016-12-01T15:07:07-08:00",
+        "Next": "NextState"
+    },
+    "LessThanEqualsDate": {
+        "Variable": "$.value",
+        "TimestampLessThanEquals": "2016-12-01T00:00:00+00:00",
+        "Next": "NextState"
+    },
+    "LessThanEqualsDateTime": {
+        "Variable": "$.value",
+        "TimestampLessThanEquals": "2016-12-01T15:07:07-08:00",
+        "Next": "NextState"
+    }
+}

@@ -1,0 +1,9 @@
+{
+    "Simple": {
+        "Not": {
+            "Variable": "$.value",
+            "StringEquals": "Lorem ipsum dolor sit amet"
+        },
+        "Next": "NextState"
+    }
+}

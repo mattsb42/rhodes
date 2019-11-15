@@ -1,0 +1,12 @@
+{
+    "CheckTrue": {
+        "BooleanEquals": true,
+        "Variable": "$.value",
+        "Next": "NextState"
+    },
+    "CheckFalse": {
+        "BooleanEquals": false,
+        "Variable": "$.value",
+        "Next": "NextState"
+    }
+}

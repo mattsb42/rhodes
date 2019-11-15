@@ -1,0 +1,36 @@
+{
+    "Simple": {
+        "Or": [
+            {
+                "Variable": "$.value",
+                "NumericLessThan": 20
+            },
+            {
+                "Variable": "$.value",
+                "NumericGreaterThan": 30
+            }
+        ],
+        "Next": "NextState"
+    },
+    "Many": {
+        "Or": [
+            {
+                "Variable": "$.value",
+                "NumericLessThan": 20
+            },
+            {
+                "Variable": "$.value",
+                "NumericGreaterThan": 30
+            },
+            {
+                "Variable": "$.value",
+                "NumericEquals": 22
+            },
+            {
+                "Variable": "$.value",
+                "NumericEquals": 27
+            }
+        ],
+        "Next": "NextState"
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "TaskState": {
+        "Comment": "Task State example",
+        "Type": "Task",
+        "Resource": "arn:aws:states:us-east-1:123456789012:task:HelloWorld",
+        "Next": "NextState",
+        "TimeoutSeconds": 300,
+        "HeartbeatSeconds": 60
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "FunWithMath": {
+        "Type": "Parallel",
+        "Branches": [
+            {
+                "StartAt": "Add",
+                "States": {
+                    "Add": {
+                        "Type": "Task",
+                        "Resource": "arn:aws:states:::task:Add",
+                        "End": true
+                    }
+                }
+            },
+            {
+                "StartAt": "Subtract",
+                "States": {
+                    "Subtract": {
+                        "Type": "Task",
+                        "Resource": "arn:aws:states:::task:Subtract",
+                        "End": true
+                    }
+                }
+            }
+        ],
+        "Next": "NextState"
+    }
+}

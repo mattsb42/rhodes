@@ -1,0 +1,7 @@
+{
+    "FailState": {
+        "Type": "Fail",
+        "Error": "ErrorA",
+        "Cause": "Kaiju attack"
+    }
+}

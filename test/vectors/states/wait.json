@@ -1,0 +1,22 @@
+{
+    "wait_ten_seconds" : {
+        "Type" : "Wait",
+        "Seconds" : 10,
+        "Next": "NextState"
+    },
+    "wait_for_seconds_path": {
+        "Type": "Wait",
+        "SecondsPath": "$.seconds",
+        "Next": "NextState"
+    },
+    "wait_until_timestamp" : {
+        "Type": "Wait",
+        "Timestamp": "2016-03-14T01:59:00Z",
+        "Next": "NextState"
+    },
+    "wait_until_timestamp_path" : {
+        "Type": "Wait",
+        "TimestampPath": "$.expirydate",
+        "Next": "NextState"
+    }
+}

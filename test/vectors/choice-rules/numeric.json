@@ -1,0 +1,27 @@
+{
+    "Equals": {
+        "Variable": "$.value",
+        "NumericEquals": 42.0,
+        "Next": "NextState"
+    },
+    "LessThan": {
+        "Variable": "$.value",
+        "NumericLessThan": 42.0,
+        "Next": "NextState"
+    },
+    "LessThanEquals": {
+        "Variable": "$.value",
+        "NumericLessThanEquals": 42.0,
+        "Next": "NextState"
+    },
+    "GreaterThan": {
+        "Variable": "$.value",
+        "NumericGreaterThan": 42.0,
+        "Next": "NextState"
+    },
+    "GreaterThanEquals": {
+        "Variable": "$.value",
+        "NumericGreaterThanEquals": 42.0,
+        "Next": "NextState"
+    }
+}

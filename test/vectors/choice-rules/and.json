@@ -1,0 +1,40 @@
+{
+    "Simple": {
+        "And": [
+            {
+                "Variable": "$.value",
+                "NumericLessThan": 30
+            },
+            {
+                "Variable": "$.value",
+                "NumericGreaterThan": 20
+            }
+        ],
+        "Next": "NextState"
+    },
+    "Many": {
+        "And": [
+            {
+                "Variable": "$.value",
+                "NumericLessThan": 30
+            },
+            {
+                "Variable": "$.value",
+                "NumericGreaterThan": 20
+            },
+            {
+                "Not": {
+                    "Variable": "$.value",
+                    "NumericEquals": 22
+                }
+            },
+            {
+                "Not": {
+                    "Variable": "$.value",
+                    "NumericEquals": 27
+                }
+            }
+        ],
+        "Next": "NextState"
+    }
+}
