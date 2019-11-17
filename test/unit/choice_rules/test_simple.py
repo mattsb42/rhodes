@@ -93,7 +93,7 @@ def _timestamp_variable_statements():
 @pytest.mark.parametrize("name, op, value", _timestamp_variable_statements())
 def test_timestamp_good_with_variable(name, op, value):
     test = op(Variable("$.value"), value)
-    # TODO: Change this to use ChoiceRule.then_() once they can exist outside of a parent
+    # TODO: Change this to use ChoiceRule.then() once they can exist outside of a parent
     test.Next = "NextState"
 
     _load_and_test_vector(kind="timestamp", name=name, value=test)
@@ -187,7 +187,7 @@ def test_not_rule_good():
 def test_not_rule_good_with_variable():
     var = Variable("$.value")
     test = var != "Lorem ipsum dolor sit amet"
-    # TODO: Change this to use ChoiceRule.then_() once they can exist outside of a parent
+    # TODO: Change this to use ChoiceRule.then() once they can exist outside of a parent
     test.Next = "NextState"
 
     _load_and_test_vector(kind="not", name="Simple", value=test)
@@ -205,7 +205,7 @@ def test_and_rule_good():
 def test_and_rule_good_with_variable():
     var = Variable("$.value")
     test = And(Rules=[var < 30, var > 20])
-    # TODO: Change this to use ChoiceRule.then_() once they can exist outside of a parent
+    # TODO: Change this to use ChoiceRule.then() once they can exist outside of a parent
     test.Next = "NextState"
 
     _load_and_test_vector(kind="and", name="Simple", value=test)
@@ -214,7 +214,7 @@ def test_and_rule_good_with_variable():
 def test_and_rule_good_with_variable_1():
     var = Variable("$.value")
     test = all_(var < 30, var > 20)
-    # TODO: Change this to use ChoiceRule.then_() once they can exist outside of a parent
+    # TODO: Change this to use ChoiceRule.then() once they can exist outside of a parent
     test.Next = "NextState"
 
     _load_and_test_vector(kind="and", name="Simple", value=test)
@@ -223,7 +223,7 @@ def test_and_rule_good_with_variable_1():
 def test_and_many_rule_good_with_variable_1():
     var = Variable("$.value")
     test = all_(var < 30, var > 20, var != 22, var != 27)
-    # TODO: Change this to use ChoiceRule.then_() once they can exist outside of a parent
+    # TODO: Change this to use ChoiceRule.then() once they can exist outside of a parent
     test.Next = "NextState"
 
     _load_and_test_vector(kind="and", name="Many", value=test)
@@ -242,7 +242,7 @@ def test_or_rule_good_with_variable():
     var = Variable("$.value")
 
     test = Or(Rules=[var < 20, var > 30])
-    # TODO: Change this to use ChoiceRule.then_() once they can exist outside of a parent
+    # TODO: Change this to use ChoiceRule.then() once they can exist outside of a parent
     test.Next = "NextState"
 
     _load_and_test_vector(kind="or", name="Simple", value=test)
@@ -252,7 +252,7 @@ def test_or_rule_good_with_variable_1():
     var = Variable("$.value")
 
     test = any_(var < 20, var > 30)
-    # TODO: Change this to use ChoiceRule.then_() once they can exist outside of a parent
+    # TODO: Change this to use ChoiceRule.then() once they can exist outside of a parent
     test.Next = "NextState"
 
     _load_and_test_vector(kind="or", name="Simple", value=test)
@@ -262,7 +262,7 @@ def test_or_many_rule_good_with_variable_1():
     var = Variable("$.value")
 
     test = any_(var < 20, var > 30, var == 22, var == 27)
-    # TODO: Change this to use ChoiceRule.then_() once they can exist outside of a parent
+    # TODO: Change this to use ChoiceRule.then() once they can exist outside of a parent
     test.Next = "NextState"
 
     _load_and_test_vector(kind="or", name="Many", value=test)

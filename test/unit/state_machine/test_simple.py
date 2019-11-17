@@ -110,8 +110,8 @@ def test_simple_choice_new_1():
     unknown = test.add_state(Fail("Unknown", Error="Unhandled Case", Cause="Unknown Value"))
 
     decision = test.start_with(Choice("TheBeginning"))
-    decision.if_(choice_rules.StringEquals(Variable="$.value", Value="A")).then_(result_a)
-    decision.if_(choice_rules.StringEquals(Variable="$.value", Value="B")).then_(result_b1)
+    decision.if_(choice_rules.StringEquals(Variable="$.value", Value="A")).then(result_a)
+    decision.if_(choice_rules.StringEquals(Variable="$.value", Value="B")).then(result_b1)
     decision.else_(unknown)
 
     expected = state_machine_body("simple-choice")
@@ -127,8 +127,8 @@ def test_simple_choice_new_2():
     unknown = test.add_state(Fail("Unknown", Error="Unhandled Case", Cause="Unknown Value"))
 
     decision = test.start_with(Choice("TheBeginning"))
-    decision.if_(Variable("$.value") == "A").then_(result_a)
-    decision.if_(Variable("$.value") == "B").then_(result_b1)
+    decision.if_(Variable("$.value") == "A").then(result_a)
+    decision.if_(Variable("$.value") == "B").then(result_b1)
     decision.else_(unknown)
 
     expected = state_machine_body("simple-choice")
@@ -144,8 +144,8 @@ def test_simple_choice_new_3():
     unknown = Fail("Unknown", Error="Unhandled Case", Cause="Unknown Value")
 
     decision = test.start_with(Choice("TheBeginning"))
-    decision.if_(Variable("$.value") == "A").then_(result_a)
-    decision.if_(Variable("$.value") == "B").then_(result_b1)
+    decision.if_(Variable("$.value") == "A").then(result_a)
+    decision.if_(Variable("$.value") == "B").then(result_b1)
     decision.else_(unknown)
 
     expected = state_machine_body("simple-choice")
@@ -161,8 +161,8 @@ def test_simple_choice_new_3_3():
     unknown = Fail("Unknown", Error="Unhandled Case", Cause="Unknown Value")
 
     decision = test.start_with(Choice("TheBeginning"))
-    decision.if_(Variable("$.value") == "A").then_(result_a)
-    decision.if_(Variable("$.value") == "B").then_(result_b1)
+    decision.if_(Variable("$.value") == "A").then(result_a)
+    decision.if_(Variable("$.value") == "B").then(result_b1)
     decision.else_(unknown)
 
     expected = state_machine_body("simple-choice")
@@ -174,10 +174,10 @@ def test_simple_choice_new_4():
     test = StateMachine(Comment="This is a simple state machine with a single choice and three end states.")
 
     decision = test.start_with(Choice("TheBeginning"))
-    decision.if_(Variable("$.value") == "A").then_(
+    decision.if_(Variable("$.value") == "A").then(
         Task("ResultA", Resource="arn:aws:lambda:us-east-1:123456789012:function:A").end()
     )
-    result_b1 = decision.if_(Variable("$.value") == "B").then_(
+    result_b1 = decision.if_(Variable("$.value") == "B").then(
         Task("ResultB1", Resource="arn:aws:lambda:us-east-1:123456789012:function:B1")
     )
     result_b1.then(Task("ResultB2", Resource="arn:aws:lambda:us-east-1:123456789012:function:B2").end())

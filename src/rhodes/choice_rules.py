@@ -144,7 +144,7 @@ class ChoiceRule:
     def _serialized_value(self):
         return self.Value
 
-    def then_(self, state):
+    def then(self, state):
         if self.Next is not None:
             raise InvalidDefinitionError(f"Choice rule already has a defined target")
 

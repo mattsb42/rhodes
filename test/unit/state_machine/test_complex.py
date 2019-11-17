@@ -70,7 +70,7 @@ def test_accretion_builder_new_1():
 
     # TODO: Auto-add children to parent if they were added before the choice was added to parent
     # TODO: Add Choice.elseif_() ?
-    select_language.if_(Variable("$.Language") == "python").then_(build_python)
+    select_language.if_(Variable("$.Language") == "python").then(build_python)
     select_language.else_(unknown_language)
 
     build_python.end()
@@ -135,7 +135,7 @@ def test_accretion_listener_new_1():
     skip_check = event_filter.then(Choice("ShouldProcess"))
     skip_check.else_(Succeed("IgnoreEvent", Comment="Ignore this event"))
 
-    locate_artifact = skip_check.if_(Variable("$.ProcessEvent") == True).then_(
+    locate_artifact = skip_check.if_(Variable("$.ProcessEvent") == True).then(
         Task(
             "LocateArtifact",
             Resource="arn:aws:lambda:us-east-1:123456789012:function:artifact-locator",
@@ -144,7 +144,7 @@ def test_accretion_listener_new_1():
     )
     artifact_check = locate_artifact.then(Choice("ArtifactCheck"))
 
-    publisher = artifact_check.if_(Variable("$.Artifact.Found") == True).then_(
+    publisher = artifact_check.if_(Variable("$.Artifact.Found") == True).then(
         Task(
             "PublishNewVersion",
             Resource="arn:aws:lambda:us-east-1:123456789012:function:layer-version-publisher",
@@ -159,7 +159,7 @@ def test_accretion_listener_new_1():
         )
     ).end()
 
-    artifact_check.if_(all_(Variable("$.Artifact.Found") == False, Variable("$.Artifact.ReadAttempts") > 15)).then_(
+    artifact_check.if_(all_(Variable("$.Artifact.Found") == False, Variable("$.Artifact.ReadAttempts") > 15)).then(
         Fail("ReplicationTimeout", Error="Timed out waiting for artifact to replicate")
     )
 
