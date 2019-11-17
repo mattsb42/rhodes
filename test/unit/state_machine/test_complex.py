@@ -3,7 +3,8 @@ import pytest
 
 from rhodes import StateMachine, choice_rules
 from rhodes.choice_rules import VariablePath, all_
-from rhodes.states import Choice, Fail, Parallel, Succeed, Task, Wait
+from rhodes.states import Choice, Fail, Parallel, Parameters, Succeed, Task, Wait
+from rhodes.structures import JsonPath
 
 from ..unit_test_helpers import compare_state_machine
 
@@ -115,7 +116,7 @@ def test_accretion_listener():
             "Notify": Task(
                 "Notify",
                 Resource="arn:aws:states:::sns:publish",
-                Parameters={"TopicArn": NOTIFY_TOPIC, "Message.$": "$.Layer"},
+                Parameters=Parameters(**{"TopicArn": NOTIFY_TOPIC, "Message.$": "$.Layer"}),
                 End=True,
             ),
         },
@@ -128,33 +129,23 @@ def test_accretion_listener_new_1():
 
     test = StateMachine(Comment="Replication Listener")
 
-    event_filter = test.start_with(
-        Task("Filter", Resource="arn:aws:lambda:us-east-1:123456789012:function:event-filter", ResultPath="$")
-    )
+    event_filter = test.start_with(Task("Filter", Resource=EVENT_FILTER_RESOURCE, ResultPath="$"))
     skip_check = event_filter.then(Choice("ShouldProcess"))
     skip_check.else_(Succeed("IgnoreEvent", Comment="Ignore this event"))
 
     locate_artifact = skip_check.if_(VariablePath("$.ProcessEvent") == True).then(
-        Task(
-            "LocateArtifact",
-            Resource="arn:aws:lambda:us-east-1:123456789012:function:artifact-locator",
-            ResultPath="$.Artifact",
-        )
+        Task("LocateArtifact", Resource=ARTIFACT_LOCATOR_RESOURCE, ResultPath="$.Artifact")
     )
     artifact_check = locate_artifact.then(Choice("ArtifactCheck"))
 
     publisher = artifact_check.if_(VariablePath("$.Artifact.Found") == True).then(
-        Task(
-            "PublishNewVersion",
-            Resource="arn:aws:lambda:us-east-1:123456789012:function:layer-version-publisher",
-            ResultPath="$.Layer",
-        )
+        Task("PublishNewVersion", Resource=LAYER_VERSION_PUBLISHER_RESOURCE, ResultPath="$.Layer")
     )
     publisher.then(
         Task(
             "Notify",
             Resource="arn:aws:states:::sns:publish",
-            Parameters={"TopicArn": "arn:aws:sns:us-east-1:123456789012:accretion-notify", "Message.$": "$.Layer"},
+            Parameters=Parameters(TopicArn=NOTIFY_TOPIC, Message=JsonPath("$.Layer")),
         )
     ).end()
 

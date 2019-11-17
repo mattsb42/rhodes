@@ -5,7 +5,7 @@ import attr
 import jsonpath_rw
 from attr.validators import instance_of
 
-__all__ = ("JsonPath", "convert_to_json_path")
+__all__ = ("JsonPath",)
 
 
 def _convert_path(value: Union[str, jsonpath_rw.JSONPath, "JsonPath"]) -> jsonpath_rw.JSONPath:
@@ -26,10 +26,3 @@ class JsonPath:
 
     def __str__(self):
         return str(self.path)
-
-
-def convert_to_json_path(value) -> JsonPath:
-    if isinstance(value, JsonPath):
-        return value
-
-    return JsonPath(value)

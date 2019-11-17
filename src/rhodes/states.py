@@ -1,5 +1,5 @@
 """"""
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 import attr
 from attr.validators import deep_iterable, deep_mapping, instance_of, optional
@@ -10,6 +10,16 @@ from ._validators import is_valid_arn, is_valid_timestamp
 from .choice_rules import ChoiceRule
 from .exceptions import InvalidDefinitionError
 from .structures import JsonPath
+
+
+def _serialize_name_and_value(*, name: str, value: Any) -> [str, Any]:
+    if hasattr(value, "to_dict") and callable(value.to_dict):
+        return name, value.to_dict()
+
+    if isinstance(value, JsonPath):
+        return name, str(value)
+
+    return name, value
 
 
 @attr.s(eq=False)
@@ -57,14 +67,9 @@ class State:
             if value is None:
                 continue
 
-            if hasattr(value, "to_dict") and callable(value.to_dict):
-                self_dict[field.name] = value.to_dict()
-                continue
+            new_name, new_value = _serialize_name_and_value(name=field.name, value=value)
 
-            if isinstance(value, JsonPath):
-                value = str(value)
-
-            self_dict[field.name] = value
+            self_dict[new_name] = new_value
 
         return self_dict
 
@@ -153,9 +158,29 @@ def _input_output(cls):
     return cls
 
 
+class Parameters:
+    def __init__(self, **kwargs):
+        self._map = kwargs
+
+    def to_dict(self) -> Dict[str, Any]:
+        def _inner():
+            for name, value in self._map.items():
+                new_name, new_value = _serialize_name_and_value(name=name, value=value)
+
+                if isinstance(value, JsonPath):
+                    new_name += ".$"
+
+                yield new_name, new_value
+
+        return dict(_inner())
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({', '.join(f'{name}={value!r}' for name, value in self._map.items())})"
+
+
 def _parameters(cls):
     # TODO: Find the right validator pattern for Parameters
-    cls.Parameters = attr.ib(default=None)
+    cls.Parameters = attr.ib(default=None, validator=optional(instance_of(Parameters)))
 
     return cls
 
