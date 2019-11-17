@@ -4,7 +4,7 @@
     "States": {
         "Filter": {
             "Type": "Task",
-            "Resource": "${EventFilterFunction.Arn}",
+            "Resource": "arn:aws:lambda:us-east-1:123456789012:function:event-filter",
             "ResultPath": "$",
             "Next": "ShouldProcess"
         },
@@ -25,7 +25,7 @@
         },
         "LocateArtifact": {
             "Type": "Task",
-            "Resource": "${ArtifactLocatorFunction.Arn}",
+            "Resource": "arn:aws:lambda:us-east-1:123456789012:function:artifact-locator",
             "ResultPath": "$.Artifact",
             "Next": "ArtifactCheck"
         },
@@ -45,7 +45,7 @@
                         },
                         {
                             "Variable": "$.Artifact.ReadAttempts",
-                            "NumericGreaterThan": 15
+                            "NumericGreaterThan": 15.0
                         }
                     ],
                     "Next": "ReplicationTimeout"
@@ -64,7 +64,7 @@
         },
         "PublishNewVersion": {
             "Type": "Task",
-            "Resource": "${LayerVersionPublisherFunction.Arn}",
+            "Resource": "arn:aws:lambda:us-east-1:123456789012:function:layer-version-publisher",
             "ResultPath": "$.Layer",
             "Next": "Notify"
         },
@@ -72,7 +72,7 @@
             "Type": "Task",
             "Resource": "arn:aws:states:::sns:publish",
             "Parameters": {
-                "TopicArn": "${NotifyTopic}",
+                "TopicArn": "arn:aws:sns:us-east-1:123456789012:accretion-notify",
                 "Message.$": "$.Layer"
             },
             "End": true

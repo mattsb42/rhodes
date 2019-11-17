@@ -149,7 +149,8 @@ def _input_output(cls):
 
 
 def _parameters(cls):
-    cls.Parameters = attr.ib(default=None, validator=optional(instance_of(str)))
+    # TODO: Find the right validator pattern for Parameters
+    cls.Parameters = attr.ib(default=None)
 
     return cls
 
@@ -222,6 +223,7 @@ class Task(State):
 
     # TODO: Resource MUST be a URI
     # TODO: Support CloudFormation references
+    # TODO: Is this parameter actually optional? I don't think it is...
     Resource = attr.ib(default=None, validator=optional(instance_of(str)))
     # TODO: Timeout MUST be positive
     TimeoutSeconds = attr.ib(default=None, validator=optional(instance_of(int)))

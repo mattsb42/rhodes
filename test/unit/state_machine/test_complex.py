@@ -2,17 +2,21 @@
 import pytest
 
 from rhodes import StateMachine, choice_rules
-from rhodes.exceptions import InvalidDefinitionError
-from rhodes.states import Choice, Fail, Map, Parallel, Pass, State, Succeed, Task, Wait
+from rhodes.choice_rules import all_
+from rhodes.states import Choice, Fail, Parallel, Succeed, Task, Wait
 from rhodes.structures import Variable
 
-from ..unit_test_helpers import state_machine_body
+from ..unit_test_helpers import compare_state_machine
 
 pytestmark = [pytest.mark.local, pytest.mark.functional]
 
 PARSE_REQUIREMENTS_RESOURCE = "arn:aws:lambda:us-east-1:123456789012:function:parse-requirements"
 BUILD_PYTHON_36_RESOURCE = "arn:aws:lambda:us-east-1:123456789012:function:build-py36"
 BUILD_PYTHON_37_RESOURCE = "arn:aws:lambda:us-east-1:123456789012:function:build-py37"
+EVENT_FILTER_RESOURCE = "arn:aws:lambda:us-east-1:123456789012:function:event-filter"
+ARTIFACT_LOCATOR_RESOURCE = "arn:aws:lambda:us-east-1:123456789012:function:artifact-locator"
+LAYER_VERSION_PUBLISHER_RESOURCE = "arn:aws:lambda:us-east-1:123456789012:function:layer-version-publisher"
+NOTIFY_TOPIC = "arn:aws:sns:us-east-1:123456789012:accretion-notify"
 
 
 def test_accretion_builder():
@@ -45,9 +49,7 @@ def test_accretion_builder():
         ),
     )
 
-    expected = state_machine_body("accretion_builder")
-    actual = test.to_dict()
-    assert actual == expected
+    compare_state_machine("accretion_builder", test)
 
 
 def test_accretion_builder_new_1():
@@ -73,6 +75,95 @@ def test_accretion_builder_new_1():
 
     build_python.end()
 
-    expected = state_machine_body("accretion_builder")
-    actual = test.to_dict()
-    assert actual == expected
+    compare_state_machine("accretion_builder", test)
+
+
+def test_accretion_listener():
+
+    test = StateMachine(
+        Comment="Replication Listener",
+        StartAt="Filter",
+        States={
+            "Filter": Task("Filter", Resource=EVENT_FILTER_RESOURCE, ResultPath="$", Next="ShouldProcess"),
+            "ShouldProcess": Choice(
+                "ShouldProcess",
+                Choices=[choice_rules.BooleanEquals(Variable="$.ProcessEvent", Value=True, Next="LocateArtifact")],
+                Default="IgnoreEvent",
+            ),
+            "IgnoreEvent": Succeed("IgnoreEvent", Comment="Ignore this event"),
+            "LocateArtifact": Task(
+                "LocateArtifact", Resource=ARTIFACT_LOCATOR_RESOURCE, ResultPath="$.Artifact", Next="ArtifactCheck"
+            ),
+            "ArtifactCheck": Choice(
+                "ArtifactCheck",
+                Choices=[
+                    choice_rules.BooleanEquals(Variable="$.Artifact.Found", Value=True, Next="PublishNewVersion"),
+                    choice_rules.And(
+                        Rules=[
+                            choice_rules.BooleanEquals(Variable="$.Artifact.Found", Value=False),
+                            choice_rules.NumericGreaterThan(Variable="$.Artifact.ReadAttempts", Value=15),
+                        ],
+                        Next="ReplicationTimeout",
+                    ),
+                ],
+                Default="WaitForReplication",
+            ),
+            "ReplicationTimeout": Fail("ReplicationTimeout", Error="Timed out waiting for artifact to replicate"),
+            "WaitForReplication": Wait("WaitForReplication", Seconds=60, Next="LocateArtifact"),
+            "PublishNewVersion": Task(
+                "PublishNewVersion", Resource=LAYER_VERSION_PUBLISHER_RESOURCE, ResultPath="$.Layer", Next="Notify"
+            ),
+            "Notify": Task(
+                "Notify",
+                Resource="arn:aws:states:::sns:publish",
+                Parameters={"TopicArn": NOTIFY_TOPIC, "Message.$": "$.Layer"},
+                End=True,
+            ),
+        },
+    )
+
+    compare_state_machine("accretion_listener", test)
+
+
+def test_accretion_listener_new_1():
+
+    test = StateMachine(Comment="Replication Listener")
+
+    event_filter = test.start_with(
+        Task("Filter", Resource="arn:aws:lambda:us-east-1:123456789012:function:event-filter", ResultPath="$")
+    )
+    skip_check = event_filter.then(Choice("ShouldProcess"))
+    skip_check.else_(Succeed("IgnoreEvent", Comment="Ignore this event"))
+
+    locate_artifact = skip_check.if_(Variable("$.ProcessEvent") == True).then_(
+        Task(
+            "LocateArtifact",
+            Resource="arn:aws:lambda:us-east-1:123456789012:function:artifact-locator",
+            ResultPath="$.Artifact",
+        )
+    )
+    artifact_check = locate_artifact.then(Choice("ArtifactCheck"))
+
+    publisher = artifact_check.if_(Variable("$.Artifact.Found") == True).then_(
+        Task(
+            "PublishNewVersion",
+            Resource="arn:aws:lambda:us-east-1:123456789012:function:layer-version-publisher",
+            ResultPath="$.Layer",
+        )
+    )
+    publisher.then(
+        Task(
+            "Notify",
+            Resource="arn:aws:states:::sns:publish",
+            Parameters={"TopicArn": "arn:aws:sns:us-east-1:123456789012:accretion-notify", "Message.$": "$.Layer"},
+        )
+    ).end()
+
+    artifact_check.if_(all_(Variable("$.Artifact.Found") == False, Variable("$.Artifact.ReadAttempts") > 15)).then_(
+        Fail("ReplicationTimeout", Error="Timed out waiting for artifact to replicate")
+    )
+
+    waiter = artifact_check.else_(Wait("WaitForReplication", Seconds=60))
+    waiter.then(locate_artifact)
+
+    compare_state_machine("accretion_listener", test)

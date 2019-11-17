@@ -5,6 +5,15 @@ from functools import partial
 from pathlib import Path
 from typing import Dict
 
+__all__ = (
+    "load_and_test_vectors",
+    "state_machine_body",
+    "state_body",
+    "choice_rule_body",
+    "compare_state_machine",
+    "compare_state",
+    "compare_choice_rule",
+)
 HERE = Path(__file__).parent
 VECTORS_DIR = HERE / ".." / "vectors"
 
@@ -41,3 +50,20 @@ def load_and_test_vectors(loader, *, kind, name, value):
     actual = value.to_dict()
 
     assert actual == expected
+
+
+def _assert_equal_to_vector(vector_type: VectorTypes, vector_name: str, value: Dict):
+    expected = _get_vector(vector_type, vector_name)
+
+    actual = value.to_dict()
+    assert actual == expected
+
+    actual_json = json.dumps(actual, indent=4, sort_keys=True)
+    expected_json = json.dumps(expected, indent=4, sort_keys=True)
+
+    assert actual_json == expected_json
+
+
+compare_state_machine = partial(_assert_equal_to_vector, VectorTypes.STATE_MACHINE)
+compare_state = partial(_assert_equal_to_vector, VectorTypes.STATE)
+compare_choice_rule = partial(_assert_equal_to_vector, VectorTypes.CHOICE_RULE)
