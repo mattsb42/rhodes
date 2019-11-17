@@ -4,7 +4,34 @@ from decimal import Decimal
 import attr
 from attr.validators import deep_iterable, instance_of, optional
 
+from ._converters import convert_to_json_path
 from .exceptions import InvalidDefinitionError
+from .structures import JsonPath
+
+
+class VariablePath(JsonPath):
+    """JsonPath with overloading helper methods."""
+
+    # TODO: Add __and__ and __or__ behaviors?
+
+    def __lt__(self, other):
+        return derive_rule(variable=self, operator="<", value=other)
+
+    def __le__(self, other):
+        return derive_rule(variable=self, operator="<=", value=other)
+
+    def __eq__(self, other):
+        return derive_rule(variable=self, operator="==", value=other)
+
+    def __ne__(self, other):
+        inner_rule = derive_rule(variable=self, operator="==", value=other)
+        return Not(Rule=inner_rule)
+
+    def __gt__(self, other):
+        return derive_rule(variable=self, operator=">", value=other)
+
+    def __ge__(self, other):
+        return derive_rule(variable=self, operator=">=", value=other)
 
 
 def _required_next(instance):
@@ -26,15 +53,22 @@ def _single_to_dict(instance, suppress_next=False):
     if not suppress_next:
         _required_next(instance)
 
-    instance_dict = {instance.__class__.__name__: instance._serialized_value(), "Variable": instance.Variable}
+    instance_dict = {instance.__class__.__name__: instance._serialized_value(), "Variable": str(instance.Variable)}
     if instance.Next is not None:
         instance_dict["Next"] = instance.Next
 
     return instance_dict
 
 
+def _convert_to_variable_path(value) -> VariablePath:
+    if isinstance(value, VariablePath):
+        return value
+
+    return VariablePath(value)
+
+
 def _single(cls):
-    cls.Variable = attr.ib(validator=instance_of(str))
+    cls.Variable = attr.ib(validator=instance_of(VariablePath), converter=_convert_to_variable_path)
     cls.Next = attr.ib(default=None, validator=optional(instance_of(str)))
     cls.to_dict = _single_to_dict
 
@@ -313,7 +347,7 @@ _OPERATORS = {
 _TYPE_MAP = {bool: "boolean", int: "number", float: "number", Decimal: "number", str: "string", datetime: "time"}
 
 
-def derive_rule(*, variable: str, operator: str, value) -> ChoiceRule:
+def derive_rule(*, variable: VariablePath, operator: str, value) -> ChoiceRule:
     try:
         value_type = _TYPE_MAP[type(value)]
     except KeyError:

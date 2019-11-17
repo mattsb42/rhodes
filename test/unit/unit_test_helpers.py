@@ -5,6 +5,11 @@ from functools import partial
 from pathlib import Path
 from typing import Dict
 
+import jsonpath_rw
+import pytest
+
+from rhodes.structures import JsonPath
+
 __all__ = (
     "load_and_test_vectors",
     "state_machine_body",
@@ -13,9 +18,15 @@ __all__ = (
     "compare_state_machine",
     "compare_state",
     "compare_choice_rule",
+    "path_converter",
 )
 HERE = Path(__file__).parent
 VECTORS_DIR = HERE / ".." / "vectors"
+
+
+@pytest.fixture(params=(lambda x: x, JsonPath, jsonpath_rw.parse))
+def path_converter(request):
+    return request.param
 
 
 class VectorTypes(Enum):

@@ -28,10 +28,10 @@ from rhodes.choice_rules import (
     TimestampGreaterThanEquals,
     TimestampLessThan,
     TimestampLessThanEquals,
+    VariablePath,
     all_,
     any_,
 )
-from rhodes.structures import Variable
 
 from ..unit_test_helpers import choice_rule_body, load_and_test_vectors
 
@@ -92,7 +92,7 @@ def _timestamp_variable_statements():
 
 @pytest.mark.parametrize("name, op, value", _timestamp_variable_statements())
 def test_timestamp_good_with_variable(name, op, value):
-    test = op(Variable("$.value"), value)
+    test = op(VariablePath("$.value"), value)
     # TODO: Change this to use ChoiceRule.then() once they can exist outside of a parent
     test.Next = "NextState"
 
@@ -185,7 +185,7 @@ def test_not_rule_good():
 
 
 def test_not_rule_good_with_variable():
-    var = Variable("$.value")
+    var = VariablePath("$.value")
     test = var != "Lorem ipsum dolor sit amet"
     # TODO: Change this to use ChoiceRule.then() once they can exist outside of a parent
     test.Next = "NextState"
@@ -203,7 +203,7 @@ def test_and_rule_good():
 
 
 def test_and_rule_good_with_variable():
-    var = Variable("$.value")
+    var = VariablePath("$.value")
     test = And(Rules=[var < 30, var > 20])
     # TODO: Change this to use ChoiceRule.then() once they can exist outside of a parent
     test.Next = "NextState"
@@ -212,7 +212,7 @@ def test_and_rule_good_with_variable():
 
 
 def test_and_rule_good_with_variable_1():
-    var = Variable("$.value")
+    var = VariablePath("$.value")
     test = all_(var < 30, var > 20)
     # TODO: Change this to use ChoiceRule.then() once they can exist outside of a parent
     test.Next = "NextState"
@@ -221,7 +221,7 @@ def test_and_rule_good_with_variable_1():
 
 
 def test_and_many_rule_good_with_variable_1():
-    var = Variable("$.value")
+    var = VariablePath("$.value")
     test = all_(var < 30, var > 20, var != 22, var != 27)
     # TODO: Change this to use ChoiceRule.then() once they can exist outside of a parent
     test.Next = "NextState"
@@ -239,7 +239,7 @@ def test_or_rule_good():
 
 
 def test_or_rule_good_with_variable():
-    var = Variable("$.value")
+    var = VariablePath("$.value")
 
     test = Or(Rules=[var < 20, var > 30])
     # TODO: Change this to use ChoiceRule.then() once they can exist outside of a parent
@@ -249,7 +249,7 @@ def test_or_rule_good_with_variable():
 
 
 def test_or_rule_good_with_variable_1():
-    var = Variable("$.value")
+    var = VariablePath("$.value")
 
     test = any_(var < 20, var > 30)
     # TODO: Change this to use ChoiceRule.then() once they can exist outside of a parent
@@ -259,7 +259,7 @@ def test_or_rule_good_with_variable_1():
 
 
 def test_or_many_rule_good_with_variable_1():
-    var = Variable("$.value")
+    var = VariablePath("$.value")
 
     test = any_(var < 20, var > 30, var == 22, var == 27)
     # TODO: Change this to use ChoiceRule.then() once they can exist outside of a parent

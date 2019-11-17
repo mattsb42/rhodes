@@ -4,10 +4,12 @@ from typing import Dict, Optional
 import attr
 from attr.validators import deep_iterable, deep_mapping, instance_of, optional
 
+from ._converters import convert_to_json_path
 from ._util import RequiredValue, require_field
 from ._validators import is_valid_arn, is_valid_timestamp
 from .choice_rules import ChoiceRule
 from .exceptions import InvalidDefinitionError
+from .structures import JsonPath
 
 
 @attr.s(eq=False)
@@ -58,6 +60,9 @@ class State:
             if hasattr(value, "to_dict") and callable(value.to_dict):
                 self_dict[field.name] = value.to_dict()
                 continue
+
+            if isinstance(value, JsonPath):
+                value = str(value)
 
             self_dict[field.name] = value
 
@@ -142,8 +147,8 @@ def _comment(cls):
 
 
 def _input_output(cls):
-    cls.InputPath = attr.ib(default=None, validator=optional(instance_of(str)))
-    cls.OutputPath = attr.ib(default=None, validator=optional(instance_of(str)))
+    cls.InputPath = attr.ib(default=None, validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
+    cls.OutputPath = attr.ib(default=None, validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
 
     return cls
 
@@ -156,7 +161,7 @@ def _parameters(cls):
 
 
 def _result_path(cls):
-    cls.ResultPath = attr.ib(default=None, validator=optional(instance_of(str)))
+    cls.ResultPath = attr.ib(default=None, validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
 
     return cls
 
@@ -290,9 +295,8 @@ class Wait(State):
     Seconds = attr.ib(default=None, validator=optional(instance_of(int)))
     # TODO: Timestamp must be ISO8601 timestamp
     Timestamp = attr.ib(default=None)
-    # TODO: Paths MUST be valid JSON-paths
-    SecondsPath = attr.ib(default=None, validator=optional(instance_of(str)))
-    TimestampPath = attr.ib(default=None, validator=optional(instance_of(str)))
+    SecondsPath = attr.ib(default=None, validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
+    TimestampPath = attr.ib(default=None, validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
 
     @Timestamp.validator
     def _check_timestamp(self, attribute, value):
@@ -352,8 +356,8 @@ class Parallel(State):
 @_catch_retry
 class Map(State):
     # TODO: Iterator MUST be a self-contained state machine.
-    Iterator = attr.ib()
+    Iterator = attr.ib(validator=instance_of(StateMachine))
     # TODO: ItemsPath MUST be a valid JSON-path
-    ItemsPath = attr.ib()
+    ItemsPath = attr.ib(validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
     # TODO: MaxConcurrency MUST be non-negative
     MaxConcurrency = attr.ib(default=None, validator=optional(instance_of(int)))

@@ -8,16 +8,22 @@ import pytz
 
 from rhodes import StateMachine, choice_rules
 from rhodes.states import Choice, Fail, Map, Parallel, Pass, State, Succeed, Task, Wait
+from rhodes.structures import JsonPath
 
-from ..unit_test_helpers import load_and_test_vectors, state_body
+from ..unit_test_helpers import load_and_test_vectors, path_converter, state_body
 
 pytestmark = [pytest.mark.local, pytest.mark.functional]
 _load_and_test_vector = partial(load_and_test_vectors, state_body)
 
 
-def test_pass():
+def test_pass(path_converter):
     name = "No-op"
-    test = Pass(name, Result={"x-datum": 0.381018, "y-datum": 622.2269926397355}, ResultPath="$.coords", Next="End")
+    test = Pass(
+        name,
+        Result={"x-datum": 0.381018, "y-datum": 622.2269926397355},
+        ResultPath=path_converter("$.coords"),
+        Next="End",
+    )
 
     _load_and_test_vector(kind="pass", name=name, value=test)
 
@@ -36,22 +42,26 @@ def test_task():
     _load_and_test_vector(kind="task", name=name, value=test)
 
 
-def test_choice():
+def test_choice(path_converter):
     name = "ChoiceStateX"
     test = Choice(
         name,
         Choices=[
-            choice_rules.Not(Rule=choice_rules.StringEquals(Variable="$.type", Value="Private"), Next="Public"),
+            choice_rules.Not(
+                Rule=choice_rules.StringEquals(Variable=path_converter("$.type"), Value="Private"), Next="Public"
+            ),
             choice_rules.And(
                 Rules=[
-                    choice_rules.NumericGreaterThanEquals(Variable="$.value", Value=20),
-                    choice_rules.NumericLessThan(Variable="$.value", Value=30),
+                    choice_rules.NumericGreaterThanEquals(Variable=path_converter("$.value"), Value=20),
+                    choice_rules.NumericLessThan(Variable=path_converter("$.value"), Value=30),
                 ],
                 Next="ValueInTwenties",
             ),
-            choice_rules.BooleanEquals(Variable="$.value", Value=True, Next="TrueState"),
+            choice_rules.BooleanEquals(Variable=path_converter("$.value"), Value=True, Next="TrueState"),
             choice_rules.TimestampLessThan(
-                Variable="$.value", Value=pytz.utc.localize(datetime(1999, 9, 13, 13, 0, 21)), Next="PartyTime"
+                Variable=path_converter("$.value"),
+                Value=pytz.utc.localize(datetime(1999, 9, 13, 13, 0, 21)),
+                Next="PartyTime",
             ),
         ],
         Default="DefaultState",
@@ -65,8 +75,10 @@ def test_choice():
     (
         ("wait_ten_seconds", dict(Seconds=10, Next="NextState")),
         ("wait_for_seconds_path", dict(SecondsPath="$.seconds", Next="NextState")),
+        ("wait_for_seconds_path", dict(SecondsPath=JsonPath("$.seconds"), Next="NextState")),
         ("wait_until_timestamp", dict(Timestamp="2016-03-14T01:59:00Z", Next="NextState")),
         ("wait_until_timestamp_path", dict(TimestampPath="$.expirydate", Next="NextState")),
+        ("wait_until_timestamp_path", dict(TimestampPath=JsonPath("$.expirydate"), Next="NextState")),
     ),
 )
 def test_wait(name: str, kwargs: Dict):
@@ -122,12 +134,12 @@ def test_parallel_new_1():
     _load_and_test_vector(kind="parallel", name=name, value=test)
 
 
-def test_map():
+def test_map(path_converter):
     name = "Validate-All"
     test = Map(
         name,
-        InputPath="$.detail",
-        ItemsPath="$.shipped",
+        InputPath=path_converter("$.detail"),
+        ItemsPath=path_converter("$.shipped"),
         MaxConcurrency=0,
         Iterator=StateMachine(
             StartAt="Validate",
@@ -137,7 +149,7 @@ def test_map():
                 )
             },
         ),
-        ResultPath="$.detail.shipped",
+        ResultPath=path_converter("$.detail.shipped"),
         End=True,
     )
 

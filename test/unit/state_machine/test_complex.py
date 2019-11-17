@@ -2,9 +2,8 @@
 import pytest
 
 from rhodes import StateMachine, choice_rules
-from rhodes.choice_rules import all_
+from rhodes.choice_rules import VariablePath, all_
 from rhodes.states import Choice, Fail, Parallel, Succeed, Task, Wait
-from rhodes.structures import Variable
 
 from ..unit_test_helpers import compare_state_machine
 
@@ -70,7 +69,7 @@ def test_accretion_builder_new_1():
 
     # TODO: Auto-add children to parent if they were added before the choice was added to parent
     # TODO: Add Choice.elseif_() ?
-    select_language.if_(Variable("$.Language") == "python").then(build_python)
+    select_language.if_(VariablePath("$.Language") == "python").then(build_python)
     select_language.else_(unknown_language)
 
     build_python.end()
@@ -135,7 +134,7 @@ def test_accretion_listener_new_1():
     skip_check = event_filter.then(Choice("ShouldProcess"))
     skip_check.else_(Succeed("IgnoreEvent", Comment="Ignore this event"))
 
-    locate_artifact = skip_check.if_(Variable("$.ProcessEvent") == True).then(
+    locate_artifact = skip_check.if_(VariablePath("$.ProcessEvent") == True).then(
         Task(
             "LocateArtifact",
             Resource="arn:aws:lambda:us-east-1:123456789012:function:artifact-locator",
@@ -144,7 +143,7 @@ def test_accretion_listener_new_1():
     )
     artifact_check = locate_artifact.then(Choice("ArtifactCheck"))
 
-    publisher = artifact_check.if_(Variable("$.Artifact.Found") == True).then(
+    publisher = artifact_check.if_(VariablePath("$.Artifact.Found") == True).then(
         Task(
             "PublishNewVersion",
             Resource="arn:aws:lambda:us-east-1:123456789012:function:layer-version-publisher",
@@ -159,9 +158,9 @@ def test_accretion_listener_new_1():
         )
     ).end()
 
-    artifact_check.if_(all_(Variable("$.Artifact.Found") == False, Variable("$.Artifact.ReadAttempts") > 15)).then(
-        Fail("ReplicationTimeout", Error="Timed out waiting for artifact to replicate")
-    )
+    artifact_check.if_(
+        all_(VariablePath("$.Artifact.Found") == False, VariablePath("$.Artifact.ReadAttempts") > 15)
+    ).then(Fail("ReplicationTimeout", Error="Timed out waiting for artifact to replicate"))
 
     waiter = artifact_check.else_(Wait("WaitForReplication", Seconds=60))
     waiter.then(locate_artifact)
