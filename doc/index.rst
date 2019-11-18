@@ -1,10 +1,12 @@
 .. include:: ../README.rst
 
+
 .. toctree::
    :maxdepth: 2
    :caption: Project Operations
 
    versioning
+   changelog
 
 ***
 API
@@ -16,10 +18,6 @@ API
 
    lib/api/index
 
-.. toctree::
-   :maxdepth: 1
-   :caption: Informational Only
-
-   lib/internal
-
-.. include:: ../CHANGELOG.rst
+.. _AWS Step Functions: https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html
+.. _AWS CloudFormation: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html
+.. _Troposphere: https://troposphere.readthedocs.io

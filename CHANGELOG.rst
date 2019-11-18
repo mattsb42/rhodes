@@ -2,12 +2,17 @@
 Changelog
 *********
 
+0.2.1 -- 2019-11-18
+===================
+
+* Updated docs and added examples.
+
 0.2.0 -- 2019-11-17
 ===================
 
-* **BREAKING CHANGE:** Rename ``ChoiceRule.then_`` to ``ChoiceRule.then``
+* **BREAKING CHANGE:** Renamed ``ChoiceRule.then_`` to ``ChoiceRule.then``
   `#12 <https://github.com/mattsb42/rhodes/issues/12>`_
-* **BREAKING CHANGE:** Rework ``Variable`` into ``JsonPath`` and ``VariablePath``
+* **BREAKING CHANGE:** Reworked ``Variable`` into ``JsonPath`` and ``VariablePath``
   `#3 <https://github.com/mattsb42/rhodes/issues/3>`_
   `#10 <https://github.com/mattsb42/rhodes/issues/10>`_
   `#11 <https://github.com/mattsb42/rhodes/issues/11>`_

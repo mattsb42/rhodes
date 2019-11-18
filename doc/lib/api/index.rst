@@ -1,9 +1,10 @@
-Public API
-==========
+API Reference
+=============
 
 .. autosummary::
    :toctree: generated
 
-   rhodes.REPLACEME
-   rhodes.REPLACEME
-   rhodes.REPLACEME
+   rhodes.states
+   rhodes.choice_rules
+   rhodes.structures
+   rhodes.exceptions
