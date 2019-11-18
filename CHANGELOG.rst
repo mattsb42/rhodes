@@ -2,7 +2,7 @@
 Changelog
 *********
 
-0.2.0 -- 2019-11-??
+0.2.0 -- 2019-11-17
 ===================
 
 * **BREAKING CHANGE:** Rename ``ChoiceRule.then_`` to ``ChoiceRule.then``
