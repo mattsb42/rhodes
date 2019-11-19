@@ -2,6 +2,12 @@
 Changelog
 *********
 
+0.3.0 -- 2019-11-19
+===================
+
+* Add preliminary service integration helpers
+  `#27 <https://github.com/mattsb42/rhodes/pull/27>`_
+
 0.2.1 -- 2019-11-18
 ===================
 

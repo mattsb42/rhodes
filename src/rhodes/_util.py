@@ -13,6 +13,8 @@ class RequiredValue:
 
 
 def require_field(*, instance: Any, required_value: RequiredValue, validator: Callable[[Any], bool] = bool):
+    # TODO: The validator here is incorrect.
+    #  I need to pull the validatidator for the attribute from the instance class.
     if not hasattr(instance, required_value.field_name):
         raise InvalidDefinitionError(f"Field {required_value.field_name!r} missing.")
 

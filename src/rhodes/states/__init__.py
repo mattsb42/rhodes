@@ -4,12 +4,26 @@ from typing import Any, Dict, Optional
 import attr
 from attr.validators import deep_iterable, deep_mapping, instance_of, optional
 
-from ._converters import convert_to_json_path
-from ._util import RequiredValue, require_field
-from ._validators import is_valid_arn, is_valid_timestamp
-from .choice_rules import ChoiceRule
-from .exceptions import InvalidDefinitionError
-from .structures import JsonPath
+from rhodes._converters import convert_to_json_path
+from rhodes._util import RequiredValue, require_field
+from rhodes._validators import is_valid_arn, is_valid_timestamp
+from rhodes.choice_rules import ChoiceRule
+from rhodes.exceptions import InvalidDefinitionError
+from rhodes.structures import JsonPath
+
+__all__ = (
+    "State",
+    "StateMachine",
+    "Pass",
+    "Parameters",
+    "Parallel",
+    "Map",
+    "Choice",
+    "Task",
+    "Wait",
+    "Fail",
+    "Succeed",
+)
 
 
 def _serialize_name_and_value(*, name: str, value: Any) -> [str, Any]:
@@ -44,6 +58,8 @@ class State:
 
     def __eq__(self, other: "State") -> bool:
         if not isinstance(other, self.__class__):
+            # TODO: What about the other direction?
+            #  ex: Child() == Parent() vs Parent() == Child()
             return False
 
         if self.to_dict() != other.to_dict():
@@ -58,6 +74,9 @@ class State:
         return not self.__eq__(other)
 
     def to_dict(self) -> Dict:
+        for required in self._required_fields:
+            require_field(instance=self, required_value=required)
+
         self_dict = {"Type": self.Type}
         for field in attr.fields(type(self)):
             if field.name == "name":
@@ -241,29 +260,31 @@ class Pass(State):
     Result = attr.ib(default=None)
 
 
+def task_type(cls):
+    cls = _catch_retry(cls)
+    cls = _next_or_end(cls)
+    cls = _result_path(cls)
+    cls = _input_output(cls)
+    cls = _comment(cls)
+
+    # TODO: Timeout MUST be positive
+    cls.TimeoutSeconds = attr.ib(default=None, validator=optional(instance_of(int)))
+    # TODO: HeartbeatSeconds MUST be positive
+    cls.HeartbeatSeconds = attr.ib(default=None, validator=optional(instance_of(int)))
+
+    return cls
+
+
 @attr.s(eq=False)
-@_comment
-@_input_output
 @_parameters
-@_result_path
-@_next_or_end
-@_catch_retry
+@task_type
 class Task(State):
     _required_fields = [RequiredValue("Resource", "Task resource is not set.")]
 
-    # TODO: Resource MUST be a URI
+    # TODO: Determine correct validator
     # TODO: Support CloudFormation references
     # TODO: Is this parameter actually optional? I don't think it is...
     Resource = attr.ib(default=None, validator=optional(instance_of(str)))
-    # TODO: Timeout MUST be positive
-    TimeoutSeconds = attr.ib(default=None, validator=optional(instance_of(int)))
-    # TODO: HeartbeatSeconds MUST be positive
-    HeartbeatSeconds = attr.ib(default=None, validator=optional(instance_of(int)))
-
-    @Resource.validator
-    def _check_resource(self, attribute, value):
-        if not is_valid_arn(value):
-            raise ValueError("Invalid Arn: {}".format(value))
 
 
 @attr.s(eq=False)
