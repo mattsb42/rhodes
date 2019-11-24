@@ -1,3 +1,4 @@
 attrs
 pytz
 jsonpath-rw
+troposphere

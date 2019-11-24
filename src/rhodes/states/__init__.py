@@ -1,8 +1,10 @@
 """"""
+import json
 from typing import Any, Dict, Optional
 
 import attr
 from attr.validators import deep_iterable, deep_mapping, instance_of, optional
+from troposphere import awslambda, stepfunctions, GetAtt, Ref, Sub
 
 from rhodes._converters import convert_to_json_path
 from rhodes._util import RequiredValue, require_field
@@ -26,7 +28,34 @@ __all__ = (
 )
 
 
+def _getatt_arn(value: str) -> str:
+    return f"${{{value}.Arn}}"
+
+
+def _ref(value: str) -> str:
+    return f"${{{value}}}"
+
+
+def _serialize_troposphere_value(value):
+    # Inject appropriate Ref/GetAtt for Troposphere
+    if isinstance(value, awslambda.Function):
+        return _getatt_arn(value.title)
+
+    if isinstance(value, stepfunctions.Activity):
+        return _ref(value.title)
+
+    if isinstance(value, Ref):
+        return _ref(value.data["Ref"])
+
+    if isinstance(value, GetAtt):
+        return _getatt_arn(value.data["Fn::GetAtt"][0])
+
+    return value
+
+
 def _serialize_name_and_value(*, name: str, value: Any) -> [str, Any]:
+    value = _serialize_troposphere_value(value)
+
     if hasattr(value, "to_dict") and callable(value.to_dict):
         return name, value.to_dict()
 
@@ -142,6 +171,11 @@ class StateMachine:
         self_dict["States"] = {key: value.to_dict() for key, value in self.States.items()}
 
         return self_dict
+
+    def to_sub(self):
+        data = self.to_dict()
+        initial_value = json.dumps(data)
+        return Sub(initial_value)
 
     def add_state(self, new_state: State) -> State:
         if new_state.name in self.States:
@@ -284,7 +318,7 @@ class Task(State):
     # TODO: Determine correct validator
     # TODO: Support CloudFormation references
     # TODO: Is this parameter actually optional? I don't think it is...
-    Resource = attr.ib(default=None, validator=optional(instance_of(str)))
+    Resource = attr.ib(default=None)#, validator=optional(instance_of(str)))
 
 
 @attr.s(eq=False)
