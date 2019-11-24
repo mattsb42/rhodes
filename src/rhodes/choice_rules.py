@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from enum import Enum
 
 import attr
 from attr.validators import deep_iterable, instance_of, optional
@@ -348,6 +349,9 @@ _TYPE_MAP = {bool: "boolean", int: "number", float: "number", Decimal: "number",
 
 
 def derive_rule(*, variable: VariablePath, operator: str, value) -> ChoiceRule:
+    if isinstance(value, Enum):
+        value = value.value
+
     try:
         value_type = _TYPE_MAP[type(value)]
     except KeyError:
