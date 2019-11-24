@@ -1,0 +1,42 @@
+{
+    "Comment": "This is a simple state machine with a single choice and three end states.",
+    "StartAt": "TheBeginning",
+    "States": {
+        "TheBeginning": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "Variable": "$.value",
+                    "StringEquals": "A",
+                    "Next": "ResultA"
+                },
+                {
+                    "Variable": "$.value",
+                    "StringEquals": "B",
+                    "Next": "ResultB1"
+                }
+            ],
+            "Default": "Unknown"
+        },
+        "ResultA": {
+            "Type": "Task",
+            "Resource": "arn:aws:lambda:us-east-1:123456789012:function:A",
+            "End": true
+        },
+        "ResultB1": {
+            "Type": "Task",
+            "Resource": "arn:aws:lambda:us-east-1:123456789012:function:B1",
+            "Next": "ResultB2"
+        },
+        "ResultB2": {
+            "Type": "Task",
+            "Resource": "arn:aws:lambda:us-east-1:123456789012:function:B2",
+            "End": true
+        },
+        "Unknown": {
+            "Type": "Fail",
+            "Error": "Unhandled Case",
+            "Cause": "Unknown Value"
+        }
+    }
+}
