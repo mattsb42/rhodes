@@ -1,18 +1,18 @@
 """Test the examples!"""
 import json
+from importlib import import_module
 from pathlib import Path
 
 import pytest
 
-from ..src import (
-    accretion_builder,
-    accretion_listener,
-    hello_world,
-    simple_choice,
-    simple_map,
-    simple_parallel,
-    three_tasks,
-)
+
+def find_tests():
+    test_src = Path(__file__).parent.parent / "src"
+    for testfile in test_src.iterdir():
+        if testfile.suffix == ".py" and testfile.stem != "__init__":
+            module_name = testfile.stem
+            module = import_module(f"..src.{module_name}", __spec__.name.rsplit(".", 1)[0])
+            yield pytest.param(module, id=module_name)
 
 
 def load_vector(module):
@@ -22,11 +22,11 @@ def load_vector(module):
 
 
 @pytest.mark.parametrize(
-    "module",
-    (accretion_builder, accretion_listener, three_tasks, simple_choice, simple_map, simple_parallel, hello_world),
+    "module", find_tests(),
 )
 @pytest.mark.examples
 def test_examples(module):
+
     expected = load_vector(module)
 
     test = module.build().to_dict()
