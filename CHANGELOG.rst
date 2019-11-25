@@ -2,6 +2,16 @@
 Changelog
 *********
 
+0.3.1 -- 2019-11-24
+===================
+
+* Add support for "comparing" VariablePath instances to Enum members
+  `#29 <https://github.com/mattsb42/rhodes/pull/29>`_
+* Add support for troposphere objects as resource values
+  `#33 <https://github.com/mattsb42/rhodes/pull/33>`_
+* Initial implementation of context object helper
+  `#34 <https://github.com/mattsb42/rhodes/pull/34>`_
+
 0.3.0 -- 2019-11-19
 ===================
 
