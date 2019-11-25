@@ -21,9 +21,7 @@ def load_vector(module):
         return json.load(raw_vector)
 
 
-@pytest.mark.parametrize(
-    "module", find_tests(),
-)
+@pytest.mark.parametrize("module", find_tests())
 @pytest.mark.examples
 def test_examples(module):
 

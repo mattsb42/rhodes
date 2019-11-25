@@ -1,7 +1,7 @@
 """
 A simple hello-world workflow with a single Lambda Task state.
 """
-from troposphere import awslambda, GetAtt
+from troposphere import GetAtt, awslambda
 
 from rhodes.states import StateMachine, Task
 

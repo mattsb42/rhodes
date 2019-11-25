@@ -1,8 +1,8 @@
 """
 Simple workflow using the Map state.
 """
-from rhodes.states import Map, StateMachine, Task
-from rhodes.structures import JsonPath
+from rhodes.states import Map, Parameters, StateMachine, Task
+from rhodes.structures import ContextPath, JsonPath
 
 
 def build() -> StateMachine:
@@ -15,6 +15,7 @@ def build() -> StateMachine:
         "ValidateAll",
         InputPath=JsonPath("$.detail"),
         ItemsPath=JsonPath("$.shipped"),
+        Parameters=Parameters(Execution=ContextPath().Execution.Id, Payload=JsonPath("$")),
         MaxConcurrency=0,
         Iterator=state_iterator,
         ResultPath=JsonPath("$.detail.shipped"),

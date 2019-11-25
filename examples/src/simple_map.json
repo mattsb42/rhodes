@@ -7,6 +7,10 @@
             "InputPath": "$.detail",
             "ItemsPath": "$.shipped",
             "MaxConcurrency": 0,
+            "Parameters": {
+                "Execution.$": "$$.Execution.Id",
+                "Payload.$": "$"
+            },
             "Iterator": {
                 "StartAt": "Validate",
                 "States": {

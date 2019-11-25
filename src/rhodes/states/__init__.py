@@ -4,14 +4,14 @@ from typing import Any, Dict, Optional
 
 import attr
 from attr.validators import deep_iterable, deep_mapping, instance_of, optional
-from troposphere import awslambda, stepfunctions, GetAtt, Ref, Sub
+from troposphere import GetAtt, Ref, Sub, awslambda, stepfunctions
 
 from rhodes._converters import convert_to_json_path
 from rhodes._util import RequiredValue, require_field
 from rhodes._validators import is_valid_arn, is_valid_timestamp
 from rhodes.choice_rules import ChoiceRule
 from rhodes.exceptions import InvalidDefinitionError
-from rhodes.structures import JsonPath
+from rhodes.structures import ContextPath, JsonPath
 
 __all__ = (
     "State",
@@ -56,11 +56,11 @@ def _serialize_troposphere_value(value):
 def _serialize_name_and_value(*, name: str, value: Any) -> [str, Any]:
     value = _serialize_troposphere_value(value)
 
+    if isinstance(value, (JsonPath, ContextPath)):
+        return name, str(value)
+
     if hasattr(value, "to_dict") and callable(value.to_dict):
         return name, value.to_dict()
-
-    if isinstance(value, JsonPath):
-        return name, str(value)
 
     return name, value
 
@@ -172,7 +172,7 @@ class StateMachine:
 
         return self_dict
 
-    def to_sub(self):
+    def definition_string(self) -> Sub:
         data = self.to_dict()
         initial_value = json.dumps(data)
         return Sub(initial_value)
@@ -220,8 +220,10 @@ class Parameters:
             for name, value in self._map.items():
                 new_name, new_value = _serialize_name_and_value(name=name, value=value)
 
-                if isinstance(value, JsonPath):
-                    new_name += ".$"
+                if isinstance(value, JsonPath) or isinstance(value, ContextPath):
+                    # If you manually provide path strings, you must manually set the parameter suffix.
+                    if not new_name.endswith(".$"):
+                        new_name += ".$"
 
                 yield new_name, new_value
 
@@ -232,7 +234,6 @@ class Parameters:
 
 
 def _parameters(cls):
-    # TODO: Find the right validator pattern for Parameters
     cls.Parameters = attr.ib(default=None, validator=optional(instance_of(Parameters)))
 
     return cls
@@ -315,10 +316,10 @@ def task_type(cls):
 class Task(State):
     _required_fields = [RequiredValue("Resource", "Task resource is not set.")]
 
-    # TODO: Determine correct validator
-    # TODO: Support CloudFormation references
-    # TODO: Is this parameter actually optional? I don't think it is...
-    Resource = attr.ib(default=None)#, validator=optional(instance_of(str)))
+    # TODO: Additional validation for strings?
+    Resource = attr.ib(
+        default=None, validator=optional(instance_of((str, awslambda.Function, stepfunctions.Activity, GetAtt, Ref)))
+    )
 
 
 @attr.s(eq=False)
