@@ -2,6 +2,12 @@
 Changelog
 *********
 
+0.4.0 -- 2019-12-xx
+===================
+
+* **BREAKING CHANGE:** Renamed ``State.name`` to ``State.title``
+  `#38 <https://github.com/mattsb42/rhodes/issues/38>`_
+
 0.3.1 -- 2019-11-24
 ===================
 

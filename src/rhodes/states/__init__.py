@@ -1,6 +1,6 @@
 """"""
 import json
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Iterable
 
 import attr
 from attr.validators import deep_iterable, deep_mapping, instance_of, optional
@@ -69,7 +69,36 @@ def _serialize_name_and_value(*, name: str, value: Any) -> [str, Any]:
 class State:
     """"""
 
-    name = attr.ib(validator=instance_of(str))
+    title: str = attr.ib(validator=instance_of(str))
+    # TODO: These need to be required and exclusive OR
+    Next: str = attr.ib(default=None, validator=optional(instance_of(str)))
+    # TODO: End=False is invalid
+    End: bool = attr.ib(default=None, validator=optional(instance_of(bool)))
+    Comment: Optional[str] = attr.ib(default=None, validator=optional(instance_of(str)))
+    InputPath: Optional[JsonPath] = attr.ib(default=None, validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
+    OutputPath: Optional[JsonPath] = attr.ib(default=None, validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
+
+    def then(self: "State", next_state: "State") -> "State":
+        if self.End:
+            raise InvalidDefinitionError(
+                "Cannot set state transition." f"State {self.title!r} already has an end condition."
+            )
+
+        self.member_of.add_state(next_state)
+        # TODO: set reference rather than extracting name
+        self.Next = next_state.title
+        return next_state
+
+    def end(self: "State") -> "State":
+        if self.Next:
+            raise InvalidDefinitionError(
+                "Cannot set end condition." f"State {self.title!r} already has a state transition."
+            )
+
+        self.End = True
+
+        return self
+
     member_of = None
     _required_fields = []
     __setup_complete = False
@@ -108,7 +137,7 @@ class State:
 
         self_dict = {"Type": self.Type}
         for field in attr.fields(type(self)):
-            if field.name == "name":
+            if field.name == "title":
                 continue
 
             value = getattr(self, field.name)
@@ -178,37 +207,24 @@ class StateMachine:
         return Sub(initial_value)
 
     def add_state(self, new_state: State) -> State:
-        if new_state.name in self.States:
-            if self.States[new_state.name] == new_state:
+        if new_state.title in self.States:
+            if self.States[new_state.title] == new_state:
                 return new_state
 
-            raise InvalidDefinitionError(f"State {new_state.name!r} already in state machine.")
+            raise InvalidDefinitionError(f"State {new_state.title!r} already in state machine.")
 
         new_state.member_of = self
         # TODO: use references rather than extracting names
-        self.States[new_state.name] = new_state
+        self.States[new_state.title] = new_state
         return new_state
 
     def start_with(self, first_state: State) -> State:
         self.add_state(new_state=first_state)
 
         # TODO: use references rather than extracting names
-        self.StartAt = first_state.name
+        self.StartAt = first_state.title
 
         return first_state
-
-
-def _comment(cls):
-    cls.Comment = attr.ib(default=None, validator=optional(instance_of(str)))
-
-    return cls
-
-
-def _input_output(cls):
-    cls.InputPath = attr.ib(default=None, validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
-    cls.OutputPath = attr.ib(default=None, validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
-
-    return cls
 
 
 class Parameters:
@@ -245,39 +261,6 @@ def _result_path(cls):
     return cls
 
 
-def _next_or_end(cls):
-    # TODO: These need to be required and exclusive OR
-    cls.Next = attr.ib(default=None, validator=optional(instance_of(str)))
-    # TODO: End=False is invalid
-    cls.End = attr.ib(default=None, validator=optional(instance_of(bool)))
-
-    def _set_next(instance: State, next_state: State) -> State:
-        if instance.End:
-            raise InvalidDefinitionError(
-                "Cannot set state transition." f"State {instance.name!r} already has an end condition."
-            )
-
-        instance.member_of.add_state(next_state)
-        # TODO: set reference rather than extracting name
-        instance.Next = next_state.name
-        return next_state
-
-    def _set_end(instance: State) -> State:
-        if instance.Next:
-            raise InvalidDefinitionError(
-                "Cannot set end condition." f"State {instance.name!r} already has a state transition."
-            )
-
-        instance.End = True
-
-        return instance
-
-    cls.then = _set_next
-    cls.end = _set_end
-
-    return cls
-
-
 def _catch_retry(cls):
     cls.Retry = attr.ib(default=None)
     cls.Catch = attr.ib(default=None)
@@ -286,21 +269,15 @@ def _catch_retry(cls):
 
 
 @attr.s(eq=False)
-@_comment
-@_input_output
 @_parameters
 @_result_path
-@_next_or_end
 class Pass(State):
     Result = attr.ib(default=None)
 
 
 def task_type(cls):
     cls = _catch_retry(cls)
-    cls = _next_or_end(cls)
     cls = _result_path(cls)
-    cls = _input_output(cls)
-    cls = _comment(cls)
 
     # TODO: Timeout MUST be positive
     cls.TimeoutSeconds = attr.ib(default=None, validator=optional(instance_of(int)))
@@ -323,12 +300,10 @@ class Task(State):
 
 
 @attr.s(eq=False)
-@_comment
-@_input_output
 class Choice(State):
     # TODO: Validate that Next and Default states are in parent
-    Choices = attr.ib(default=attr.Factory(list), validator=deep_iterable(member_validator=instance_of(ChoiceRule)))
-    Default = attr.ib(default=None)
+    Choices: Iterable[ChoiceRule] = attr.ib(default=attr.Factory(list), validator=deep_iterable(member_validator=instance_of(ChoiceRule)))
+    Default: Optional[str] = attr.ib(default=None, validator=optional(instance_of(str)))
 
     def add_choice(self, rule: ChoiceRule) -> ChoiceRule:
         if rule.member_of is not None:
@@ -346,18 +321,18 @@ class Choice(State):
 
     def else_(self, state: State) -> State:
         if self.Default is not None:
-            raise InvalidDefinitionError(f'Choice state "{self.name}" already has a Default transition.')
+            raise InvalidDefinitionError(f'Choice state "{self.title}" already has a Default transition.')
 
         self.member_of.add_state(state)
 
         # TODO: use references rather than extracting names
-        self.Default = state.name
+        self.Default = state.title
 
         return state
 
     def to_dict(self) -> Dict:
         if not self.Choices:
-            raise InvalidDefinitionError(f'Choice state "{self.name}" has no defined choices.')
+            raise InvalidDefinitionError(f'Choice state "{self.title}" has no defined choices.')
 
         self_dict = super(Choice, self).to_dict()
 
@@ -368,16 +343,14 @@ class Choice(State):
 
 
 @attr.s(eq=False)
-@_comment
-@_input_output
-@_next_or_end
 class Wait(State):
     # TODO: Exactly one of these
-    Seconds = attr.ib(default=None, validator=optional(instance_of(int)))
+    Seconds: Optional[int] = attr.ib(default=None, validator=optional(instance_of(int)))
     # TODO: Timestamp must be ISO8601 timestamp
-    Timestamp = attr.ib(default=None)
-    SecondsPath = attr.ib(default=None, validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
-    TimestampPath = attr.ib(default=None, validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
+    # TODO: Just only accept datetime objects, like Timestamp choice rules
+    Timestamp: Optional[str] = attr.ib(default=None)
+    SecondsPath: Optional[JsonPath] = attr.ib(default=None, validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
+    TimestampPath: Optional[JsonPath] = attr.ib(default=None, validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
 
     @Timestamp.validator
     def _check_timestamp(self, attribute, value):
@@ -386,31 +359,27 @@ class Wait(State):
 
 
 @attr.s(eq=False)
-@_comment
-@_input_output
 class Succeed(State):
     """"""
+    # TODO: Succeed does not accept any of the parent parameters...
 
 
 @attr.s(eq=False)
-@_comment
 class Fail(State):
     """"""
+    # TODO: The only parent parameter that Fail accepts is Comment
 
-    Error = attr.ib(default=None, validator=optional(instance_of(str)))
-    Cause = attr.ib(default=None, validator=optional(instance_of(str)))
+    Error: Optional[str] = attr.ib(default=None, validator=optional(instance_of(str)))
+    Cause: Optional[str] = attr.ib(default=None, validator=optional(instance_of(str)))
 
 
 @attr.s(eq=False)
-@_comment
-@_input_output
-@_parameters
+@_parameters  # TODO: Spec and developer guide disagree on whether this is accepted...
 @_result_path
-@_next_or_end
 @_catch_retry
 class Parallel(State):
     # TODO: Each branch MUST be a self-contained state machine.
-    Branches = attr.ib(default=attr.Factory(list))
+    Branches: Iterable[StateMachine] = attr.ib(default=attr.Factory(list))
 
     def to_dict(self) -> Dict:
         self_dict = super(Parallel, self).to_dict()
@@ -429,16 +398,18 @@ class Parallel(State):
 
 
 @attr.s(eq=False)
-@_comment
-@_input_output
 @_parameters
 @_result_path
-@_next_or_end
 @_catch_retry
 class Map(State):
+    _required_fields = [
+        RequiredValue("Iterator", "Map iterator must be set."),
+        RequiredValue("ItemsPath", "Map items path must be set.")
+    ]
+
     # TODO: Iterator MUST be a self-contained state machine.
-    Iterator = attr.ib(validator=instance_of(StateMachine))
+    Iterator: StateMachine = attr.ib(default=None, validator=instance_of(StateMachine))
     # TODO: ItemsPath MUST be a valid JSON-path
-    ItemsPath = attr.ib(validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
+    ItemsPath: JsonPath = attr.ib(default=None, validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
     # TODO: MaxConcurrency MUST be non-negative
-    MaxConcurrency = attr.ib(default=None, validator=optional(instance_of(int)))
+    MaxConcurrency: Optional[int] = attr.ib(default=None, validator=optional(instance_of(int)))

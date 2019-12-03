@@ -185,7 +185,7 @@ class ChoiceRule:
 
         self.member_of.member_of.add_state(state)
 
-        self.Next = state.name
+        self.Next = state.title
 
         return state
 
