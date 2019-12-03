@@ -2,7 +2,7 @@
 Changelog
 *********
 
-0.4.0 -- 2019-12-xx
+0.4.0 -- 2019-12-03
 ===================
 
 * **BREAKING CHANGE:** Renamed ``State.name`` to ``State.title``
