@@ -46,6 +46,12 @@ setup(
     name="rhodes",
     version=get_version(),
     packages=find_packages("src"),
+    # TODO: Collect these with os.walk
+    package_data={
+        "rhodes": ["py.typed", "*.pyi"],
+        "rhodes.states": ["*.pyi"],
+        "rhodes.states.services": ["*.pyi"]
+    },
     package_dir={"": "src"},
     url="https://github.com/mattsb42/rhodes",
     author="Matt Bullock",
