@@ -66,7 +66,9 @@ def _parameters(cls):
 
 def _result_path(cls):
     """Add the "ResultPath" parameter to the class."""
-    cls.ResultPath = RHODES_ATTRIB(validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
+    cls.ResultPath = RHODES_ATTRIB(
+        default=JsonPath("$"), validator=optional(instance_of(JsonPath)), converter=convert_to_json_path
+    )
 
     return cls
 
@@ -82,8 +84,12 @@ def _catch_retry(cls):
 def _input_output(cls):
     """Add the "InputPath" and "OutputPath" parameters to the class."""
 
-    cls.InputPath = RHODES_ATTRIB(validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
-    cls.OutputPath = RHODES_ATTRIB(validator=optional(instance_of(JsonPath)), converter=convert_to_json_path)
+    cls.InputPath = RHODES_ATTRIB(
+        default=JsonPath("$"), validator=optional(instance_of(JsonPath)), converter=convert_to_json_path
+    )
+    cls.OutputPath = RHODES_ATTRIB(
+        default=JsonPath("$"), validator=optional(instance_of(JsonPath)), converter=convert_to_json_path
+    )
 
     return cls
 

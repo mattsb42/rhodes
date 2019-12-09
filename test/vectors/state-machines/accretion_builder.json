@@ -5,10 +5,14 @@
         "ParseRequirements": {
             "Type": "Task",
             "Resource": "arn:aws:lambda:us-east-1:123456789012:function:parse-requirements",
+            "InputPath": "$",
+            "OutputPath": "$",
+            "ResultPath": "$",
             "Next": "SelectLanguage"
         },
         "SelectLanguage": {
             "Type": "Choice",
+            "InputPath": "$",
             "Choices": [
                 {
                     "Variable": "$.Language",
@@ -16,6 +20,7 @@
                     "Next": "BuildPython"
                 }
             ],
+            "OutputPath": "$",
             "Default": "UnknownLanguage"
         },
         "UnknownLanguage": {
@@ -24,6 +29,7 @@
         },
         "BuildPython": {
             "Type": "Parallel",
+            "InputPath": "$",
             "Branches": [
                 {
                     "StartAt": "BuildPython36",
@@ -31,6 +37,9 @@
                         "BuildPython36": {
                             "Type": "Task",
                             "Resource": "arn:aws:lambda:us-east-1:123456789012:function:build-py36",
+                            "InputPath": "$",
+                            "OutputPath": "$",
+                            "ResultPath": "$",
                             "End": true
                         }
                     }
@@ -41,11 +50,15 @@
                         "BuildPython37": {
                             "Type": "Task",
                             "Resource": "arn:aws:lambda:us-east-1:123456789012:function:build-py37",
+                            "InputPath": "$",
+                            "OutputPath": "$",
+                            "ResultPath": "$",
                             "End": true
                         }
                     }
                 }
             ],
+            "OutputPath": "$",
             "ResultPath": "$.BuildResults",
             "End": true
         }

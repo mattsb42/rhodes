@@ -16,21 +16,32 @@
                     "Next": "ResultB1"
                 }
             ],
+            "InputPath": "$",
+            "OutputPath": "$",
             "Default": "Unknown"
         },
         "ResultA": {
             "Type": "Task",
             "Resource": "arn:aws:lambda:us-east-1:123456789012:function:A",
+            "InputPath": "$",
+            "OutputPath": "$",
+            "ResultPath": "$",
             "End": true
         },
         "ResultB1": {
             "Type": "Task",
             "Resource": "arn:aws:lambda:us-east-1:123456789012:function:B1",
+            "InputPath": "$",
+            "OutputPath": "$",
+            "ResultPath": "$",
             "Next": "ResultB2"
         },
         "ResultB2": {
             "Type": "Task",
             "Resource": "arn:aws:lambda:us-east-1:123456789012:function:B2",
+            "InputPath": "$",
+            "OutputPath": "$",
+            "ResultPath": "$",
             "End": true
         },
         "Unknown": {

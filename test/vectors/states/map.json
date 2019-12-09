@@ -2,6 +2,7 @@
     "Validate-All": {
         "Type": "Map",
         "InputPath": "$.detail",
+        "OutputPath": "$",
         "ItemsPath": "$.shipped",
         "MaxConcurrency": 0,
         "Iterator": {
@@ -10,6 +11,9 @@
                 "Validate": {
                     "Type": "Task",
                     "Resource": "arn:aws:lambda:us-east-1:123456789012:function:ship-val",
+                    "InputPath": "$",
+                    "OutputPath": "$",
+                    "ResultPath": "$",
                     "End": true
                 }
             }

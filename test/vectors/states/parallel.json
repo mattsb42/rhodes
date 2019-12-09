@@ -1,6 +1,9 @@
 {
     "FunWithMath": {
         "Type": "Parallel",
+        "InputPath": "$",
+        "OutputPath": "$",
+        "ResultPath": "$",
         "Branches": [
             {
                 "StartAt": "Add",
@@ -8,6 +11,9 @@
                     "Add": {
                         "Type": "Task",
                         "Resource": "arn:aws:states:::task:Add",
+                        "InputPath": "$",
+                        "OutputPath": "$",
+                        "ResultPath": "$",
                         "End": true
                     }
                 }
@@ -18,6 +24,9 @@
                     "Subtract": {
                         "Type": "Task",
                         "Resource": "arn:aws:states:::task:Subtract",
+                        "InputPath": "$",
+                        "OutputPath": "$",
+                        "ResultPath": "$",
                         "End": true
                     }
                 }

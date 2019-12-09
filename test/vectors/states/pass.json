@@ -6,6 +6,8 @@
             "y-datum": 622.2269926397355
         },
         "ResultPath": "$.coords",
+        "InputPath": "$",
+        "OutputPath": "$",
         "Next": "End"
     }
 }

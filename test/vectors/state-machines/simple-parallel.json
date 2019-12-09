@@ -4,6 +4,9 @@
     "States": {
         "LookupCustomerInfo": {
             "Type": "Parallel",
+            "InputPath": "$",
+            "OutputPath": "$",
+            "ResultPath": "$",
             "End": true,
             "Branches": [
                 {
@@ -12,6 +15,9 @@
                         "LookupAddress": {
                             "Type": "Task",
                             "Resource": "arn:aws:lambda:us-east-1:123456789012:function:AddressFinder",
+                            "InputPath": "$",
+                            "OutputPath": "$",
+                            "ResultPath": "$",
                             "End": true
                         }
                     }
@@ -22,6 +28,9 @@
                         "LookupPhone": {
                             "Type": "Task",
                             "Resource": "arn:aws:lambda:us-east-1:123456789012:function:PhoneFinder",
+                            "InputPath": "$",
+                            "OutputPath": "$",
+                            "ResultPath": "$",
                             "End": true
                         }
                     }

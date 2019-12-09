@@ -14,6 +14,7 @@ from rhodes._types import (
     State,
     StateMirror,
 )
+from rhodes.structures import JsonPath
 
 class ServiceIntegration(State):
     def __init__(
@@ -23,9 +24,9 @@ class ServiceIntegration(State):
         Comment: COMMENT = None,
         Next: NEXT = None,
         End: END = None,
-        InputPath: PATH_INPUT = None,
-        OutputPath: PATH_INPUT = None,
-        ResultPath: PATH_INPUT = None,
+        InputPath: PATH_INPUT = JsonPath("$"),
+        OutputPath: PATH_INPUT = JsonPath("$"),
+        ResultPath: PATH_INPUT = JsonPath("$"),
         Catch: CATCH = None,
         Retry: RETRY = None,
         TimeoutSeconds: TIMEOUT_SECONDS = None,

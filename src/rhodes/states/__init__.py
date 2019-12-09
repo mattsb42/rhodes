@@ -1,8 +1,10 @@
 """"""
 import json
-from typing import Any, Dict, Iterable, List, Optional, TypeVar
+from enum import Enum
+from typing import Any, Dict, Iterable, List, Optional, Union
 
 import attr
+import jsonpath_rw
 from attr.validators import deep_iterable, deep_mapping, instance_of, optional
 from troposphere import Sub
 
@@ -90,6 +92,26 @@ class State:
             self_dict[new_name] = new_value
 
         return self_dict
+
+    def promote(self, path: Union[str, Enum, jsonpath_rw.JSONPath, JsonPath]) -> "Pass":
+        # TODO: move this to the resultpath decorator?
+        if not hasattr(self, "ResultPath"):
+            raise AttributeError(f"{self.__class__.__name__} does not support 'promote'")
+
+        path = convert_to_json_path(path)
+
+        path_str = str(path)
+
+        if not path_str.startswith("@."):
+            raise ValueError("Promotion path must be relative (@.baz.wat)")
+
+        input_path = JsonPath(f"{self.ResultPath}{path_str[1:]}")
+
+        return self.then(Pass(
+            f"{self.title}-PromoteResult",
+            InputPath=input_path,
+            ResultPath=self.ResultPath,
+        ))
 
 
 @attr.s

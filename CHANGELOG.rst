@@ -12,12 +12,27 @@ Changelog
 
 * **BREAKING CHANGE:** ``AwsBatch`` now required ``Parameters`` to be a ``Parameters`` instance.
 * **BREAKING CHANGE:** All parameters for ``State`` classes other than ``title`` are now keyword-only.
+  `#47 <https://github.com/mattsb42/rhodes/issues/47>`_
 * **BREAKING CHANGE:** Most parameters are now keyword-only.
+  `#47 <https://github.com/mattsb42/rhodes/issues/47>`_
+* Added explicit local defaults for common State fields:
+  `#50 <https://github.com/mattsb42/rhodes/issues/50>`_
+
+    * ``InputPath``
+    * ``OutputPath``
+    * ``ResultPath``
+
+features
+--------
+
+* Add ``State.promote`` method for states that support ``ResultPath``.
+  `#32 <https://github.com/mattsb42/rhodes/issues/32>`_
 
 bugfixes
 --------
 
 * Fixed ``AwsStepFunctions`` parameters names.
+  `#45 <https://github.com/mattsb42/rhodes/issues/45>`_
 
 0.4.0 -- 2019-12-03
 ===================

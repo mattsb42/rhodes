@@ -2,21 +2,29 @@
     "wait_ten_seconds" : {
         "Type" : "Wait",
         "Seconds" : 10,
-        "Next": "NextState"
+        "Next": "NextState",
+        "InputPath": "$",
+        "OutputPath": "$"
     },
     "wait_for_seconds_path": {
         "Type": "Wait",
         "SecondsPath": "$.seconds",
-        "Next": "NextState"
+        "Next": "NextState",
+        "InputPath": "$",
+        "OutputPath": "$"
     },
     "wait_until_timestamp" : {
         "Type": "Wait",
         "Timestamp": "2016-03-14T01:59:00Z",
-        "Next": "NextState"
+        "Next": "NextState",
+        "InputPath": "$",
+        "OutputPath": "$"
     },
     "wait_until_timestamp_path" : {
         "Type": "Wait",
         "TimestampPath": "$.expirydate",
-        "Next": "NextState"
+        "Next": "NextState",
+        "InputPath": "$",
+        "OutputPath": "$"
     }
 }

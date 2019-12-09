@@ -33,4 +33,5 @@ def test_convert_to_json_path(path_value):
 
     test = convert_to_json_path(path_value)
 
-    assert test.path == expected.path
+    # must be expected == test here because of VariablePath
+    assert expected.path == test.path

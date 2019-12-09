@@ -4,12 +4,16 @@
     "States": {
         "Filter": {
             "Type": "Task",
+            "InputPath": "$",
             "Resource": "arn:aws:lambda:us-east-1:123456789012:function:event-filter",
             "ResultPath": "$",
+            "OutputPath": "$",
             "Next": "ShouldProcess"
         },
         "ShouldProcess": {
             "Type": "Choice",
+            "InputPath": "$",
+            "OutputPath": "$",
             "Choices": [
                 {
                     "Variable": "$.ProcessEvent",
@@ -26,11 +30,15 @@
         "LocateArtifact": {
             "Type": "Task",
             "Resource": "arn:aws:lambda:us-east-1:123456789012:function:artifact-locator",
+            "InputPath": "$",
+            "OutputPath": "$",
             "ResultPath": "$.Artifact",
             "Next": "ArtifactCheck"
         },
         "ArtifactCheck": {
             "Type": "Choice",
+            "InputPath": "$",
+            "OutputPath": "$",
             "Choices": [
                 {
                     "Variable": "$.Artifact.Found",
@@ -60,17 +68,24 @@
         "WaitForReplication": {
             "Type": "Wait",
             "Seconds": 60,
+            "InputPath": "$",
+            "OutputPath": "$",
             "Next": "LocateArtifact"
         },
         "PublishNewVersion": {
             "Type": "Task",
             "Resource": "arn:aws:lambda:us-east-1:123456789012:function:layer-version-publisher",
+            "InputPath": "$",
+            "OutputPath": "$",
             "ResultPath": "$.Layer",
             "Next": "Notify"
         },
         "Notify": {
             "Type": "Task",
             "Resource": "arn:aws:states:::sns:publish",
+            "InputPath": "$",
+            "OutputPath": "$",
+            "ResultPath": "$",
             "Parameters": {
                 "TopicArn": "arn:aws:sns:us-east-1:123456789012:accretion-notify",
                 "Message.$": "$.Layer"

@@ -1,7 +1,7 @@
 """Unit tests for ``rhodes.structures``."""
 import pytest
 
-from rhodes.structures import ContextPath
+from rhodes.structures import ContextPath, Parameters
 
 pytestmark = [pytest.mark.local, pytest.mark.functional]
 
@@ -71,3 +71,9 @@ def test_contextpath_invalid(path):
         ContextPath(path=path)
 
     excinfo.match("Invalid Context Path")
+
+
+def test_parameters_repr():
+    test = Parameters(a="A", b=3, c=True)
+
+    assert repr(test) == "Parameters(a='A', b=3, c=True)"

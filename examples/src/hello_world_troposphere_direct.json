@@ -5,6 +5,9 @@
         "Hello World": {
             "Type": "Task",
             "Resource": "${HelloWorldFunction.Arn}",
+            "InputPath": "$",
+            "OutputPath": "$",
+            "ResultPath": "$",
             "End": true
         }
     }

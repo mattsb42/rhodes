@@ -34,6 +34,7 @@ class State:
     Comment: COMMENT
     _required_fields: Iterable[RequiredValue]
     def to_dict(self) -> Dict: ...
+    def promote(self, path: PATH_INPUT) -> Pass: ...
 
 class StateMachine:
     def __init__(
@@ -64,9 +65,9 @@ class Pass(State):
         Comment: COMMENT = None,
         Next: NEXT = None,
         End: END = None,
-        InputPath: PATH_INPUT = None,
-        OutputPath: PATH_INPUT = None,
-        ResultPath: PATH_INPUT = None,
+        InputPath: PATH_INPUT = JsonPath("$"),
+        OutputPath: PATH_INPUT = JsonPath("$"),
+        ResultPath: PATH_INPUT = JsonPath("$"),
         Parameters: PARAMETERS = None,
     ) -> None: ...
     Next: NEXT
@@ -86,9 +87,9 @@ class Task(State):
         Comment: COMMENT = None,
         Next: NEXT = None,
         End: END = None,
-        InputPath: PATH_INPUT = None,
-        OutputPath: PATH_INPUT = None,
-        ResultPath: PATH_INPUT = None,
+        InputPath: PATH_INPUT = JsonPath("$"),
+        OutputPath: PATH_INPUT = JsonPath("$"),
+        ResultPath: PATH_INPUT = JsonPath("$"),
         Catch: CATCH = None,
         Retry: RETRY = None,
         TimeoutSeconds: TIMEOUT_SECONDS = None,
@@ -116,8 +117,8 @@ class Choice(State):
         title: TITLE,
         *,
         Comment: COMMENT = None,
-        InputPath: PATH_INPUT = None,
-        OutputPath: PATH_INPUT = None,
+        InputPath: PATH_INPUT = JsonPath("$"),
+        OutputPath: PATH_INPUT = JsonPath("$"),
         Choices: List[ChoiceRule] = attr.Factory(list),
         Default: Optional[str] = None,
     ): ...
@@ -137,12 +138,12 @@ class Wait(State):
         Comment: COMMENT = None,
         Next: NEXT = None,
         End: END = None,
-        InputPath: PATH_INPUT = None,
-        OutputPath: PATH_INPUT = None,
+        InputPath: PATH_INPUT = JsonPath("$"),
+        OutputPath: PATH_INPUT = JsonPath("$"),
         Seconds: Optional[int] = None,
         Timestamp: Optional[str] = None,
-        SecondsPath: PATH_INPUT = None,
-        TimestampPath: PATH_INPUT = None,
+        SecondsPath: PATH_INPUT = JsonPath("$"),
+        TimestampPath: PATH_INPUT = JsonPath("$"),
     ): ...
     Next: NEXT
     End: END
@@ -172,9 +173,9 @@ class Parallel(State):
         Comment: COMMENT = None,
         Next: NEXT = None,
         End: END = None,
-        InputPath: PATH_INPUT = None,
-        OutputPath: PATH_INPUT = None,
-        ResultPath: PATH_INPUT = None,
+        InputPath: PATH_INPUT = JsonPath("$"),
+        OutputPath: PATH_INPUT = JsonPath("$"),
+        ResultPath: PATH_INPUT = JsonPath("$"),
         Catch: CATCH = None,
         Retry: RETRY = None,
         Parameters: PARAMETERS = None,
@@ -201,14 +202,14 @@ class Map(State):
         Comment: COMMENT = None,
         Next: NEXT = None,
         End: END = None,
-        InputPath: PATH_INPUT = None,
-        OutputPath: PATH_INPUT = None,
-        ResultPath: PATH_INPUT = None,
+        InputPath: PATH_INPUT = JsonPath("$"),
+        OutputPath: PATH_INPUT = JsonPath("$"),
+        ResultPath: PATH_INPUT = JsonPath("$"),
         Catch: CATCH = None,
         Retry: RETRY = None,
         Parameters: PARAMETERS = None,
         Iterator: Optional[StateMachine] = None,
-        ItemsPath: PATH_INPUT = None,
+        ItemsPath: PATH_INPUT = JsonPath("$"),
         MaxConcurrency: Optional[int] = None,
     ): ...
     Next: NEXT
