@@ -107,11 +107,7 @@ class State:
 
         input_path = JsonPath(f"{self.ResultPath}{path_str[1:]}")
 
-        return self.then(Pass(
-            f"{self.title}-PromoteResult",
-            InputPath=input_path,
-            ResultPath=self.ResultPath,
-        ))
+        return self.then(Pass(f"{self.title}-PromoteResult", InputPath=input_path, ResultPath=self.ResultPath))
 
 
 @attr.s

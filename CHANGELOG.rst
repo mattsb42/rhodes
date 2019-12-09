@@ -2,7 +2,7 @@
 Changelog
 *********
 
-0.5.0 -- 2019-12-??
+0.5.0 -- 2019-12-09
 ===================
 
 * **BREAKING CHANGE:** ``AwsLambda`` now requires ``Payload`` to be a ``Parameters`` instance.

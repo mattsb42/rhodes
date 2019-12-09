@@ -1,7 +1,6 @@
 """Unit test suite for ``rhodes.states``."""
-import pytest
-
 import jsonpath_rw
+import pytest
 
 from rhodes.states import Pass, StateMachine
 from rhodes.structures import JsonPath
@@ -35,10 +34,10 @@ def test_default_value(cls, name, value):
     assert test == value
 
 
-@pytest.mark.parametrize("source_result, requested_promotion, expected_input", (
-        ("$.foo.bar", "@.baz", "$.foo.bar.baz"),
-        ("$", "@.bar.baz", "$.bar.baz"),
-))
+@pytest.mark.parametrize(
+    "source_result, requested_promotion, expected_input",
+    (("$.foo.bar", "@.baz", "$.foo.bar.baz"), ("$", "@.bar.baz", "$.bar.baz")),
+)
 @pytest.mark.parametrize("path_reader", (lambda x: x, jsonpath_rw.parse, JsonPath))
 def test_promote(path_reader, source_result, requested_promotion, expected_input):
     machine = StateMachine()
