@@ -4,12 +4,14 @@ https://docs.aws.amazon.com/step-functions/latest/dg/connect-glue.html
 """
 import attr
 
-from rhodes._util import RequiredValue
-from rhodes.states.services import IntegrationPattern, ServiceArn, ServiceIntegration, _supports_patterns
+from rhodes._util import RHODES_ATTRIB, RequiredValue
+from rhodes.identifiers import IntegrationPattern, ServiceArn
+from rhodes.states.services import ServiceIntegration
+from rhodes.states.services.util import supports_patterns
 
 
 @attr.s(eq=False)
-@_supports_patterns(IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.SYNCHRONOUS)
+@supports_patterns(IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.SYNCHRONOUS)
 class AwsGlue(ServiceIntegration):
     _required_fields = ()
     _resource_name = ServiceArn.GLUE
@@ -17,11 +19,11 @@ class AwsGlue(ServiceIntegration):
     # TODO: Sort out validation rules
     #  https://docs.aws.amazon.com/step-functions/latest/dg/connect-glue.html
 
-    JobName = attr.ib(default=None)
-    JobRunId = attr.ib(default=None)
-    Arguments = attr.ib(default=None)
+    JobName = RHODES_ATTRIB()
+    JobRunId = RHODES_ATTRIB()
+    Arguments = RHODES_ATTRIB()
     # TODO: AllocatedCapacity is deprecated; Will SFn's integration change?
-    AllocatedCapacity = attr.ib(default=None)
-    Timeout = attr.ib(default=None)
-    SecurityConfiguration = attr.ib(default=None)
-    NotificationProperty = attr.ib(default=None)
+    AllocatedCapacity = RHODES_ATTRIB()
+    Timeout = RHODES_ATTRIB()
+    SecurityConfiguration = RHODES_ATTRIB()
+    NotificationProperty = RHODES_ATTRIB()

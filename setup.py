@@ -58,6 +58,7 @@ setup(
     license="Apache 2.0",
     install_requires=INSTALL_REQUIRES,
     dependency_links=DEPENDENCY_LINKS,
+    python_requires=">=3.6",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",

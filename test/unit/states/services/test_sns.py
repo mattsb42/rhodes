@@ -1,10 +1,10 @@
 """Unit test suite for ``rhodes.states.services.sns``."""
 import pytest
 
-from rhodes.states import Parameters, Task
-from rhodes.states.services import IntegrationPattern
+from rhodes.states import Task
 from rhodes.states.services.sns import AmazonSns
-from rhodes.structures import JsonPath
+from rhodes.states.services.util import IntegrationPattern
+from rhodes.structures import JsonPath, Parameters
 
 pytestmark = [pytest.mark.local, pytest.mark.functional]
 

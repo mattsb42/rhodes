@@ -2,19 +2,22 @@
 
 https://docs.aws.amazon.com/step-functions/latest/dg/connect-batch.html
 """
-from typing import Dict, Iterable
+from typing import Iterable
 
 import attr
-from attr.validators import deep_mapping, instance_of
+from attr.validators import instance_of
 
-from rhodes._util import RequiredValue
-from rhodes.states.services import IntegrationPattern, ServiceArn, ServiceIntegration, _supports_patterns
+from rhodes._util import RHODES_ATTRIB, RequiredValue
+from rhodes.identifiers import IntegrationPattern, ServiceArn
+from rhodes.states.services import ServiceIntegration
+from rhodes.states.services.util import supports_patterns
+from rhodes.structures import Parameters
 
 __all__ = ("AwsBatch",)
 
 
 @attr.s(eq=False)
-@_supports_patterns(IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.SYNCHRONOUS)
+@supports_patterns(IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.SYNCHRONOUS)
 class AwsBatch(ServiceIntegration):
     _required_fields = (
         RequiredValue("JobDefinition", "AWS Batch Task requires a job definition."),
@@ -27,19 +30,15 @@ class AwsBatch(ServiceIntegration):
     #  https://docs.aws.amazon.com/batch/latest/APIReference/API_SubmitJob.html#Batch-SubmitJob-request-arrayProperties
 
     # The ARN/name
-    JobDefinition = attr.ib(default=None)
+    JobDefinition = RHODES_ATTRIB()
     # unique name...does SFn actually require this?
-    JobName: str = attr.ib(default=None, validator=instance_of(str))
+    JobName: str = RHODES_ATTRIB(validator=instance_of(str))
     # ??? ARN for something?
-    JobQueue = attr.ib(default=None)
-    # Arbitrary string-string map
-    Parameters: Dict[str, str] = attr.ib(
-        default=attr.Factory(dict),
-        validator=deep_mapping(key_validator=instance_of(str), value_validator=instance_of(str)),
-    )
+    JobQueue = RHODES_ATTRIB()
+    Parameters: Parameters = RHODES_ATTRIB(validator=instance_of(Parameters))
     # TODO: These others feel like things that should already exist in Troposphere
-    ArrayProperties: Iterable = attr.ib(default=None)
-    ContainerOverrides = attr.ib(default=None)
-    DependsOn = attr.ib(default=None)
-    RetryStrategy = attr.ib(default=None)
-    Timeout = attr.ib(default=None)
+    ArrayProperties: Iterable = RHODES_ATTRIB()
+    ContainerOverrides = RHODES_ATTRIB()
+    DependsOn = RHODES_ATTRIB()
+    RetryStrategy = RHODES_ATTRIB()
+    Timeout = RHODES_ATTRIB()

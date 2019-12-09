@@ -1,0 +1,33 @@
+from enum import Enum
+from typing import Any, Optional, TypeVar, Union
+
+import jsonpath_rw
+from troposphere import GetAtt, Ref, awslambda, stepfunctions
+
+from rhodes.choice_rules import ChoiceRule
+from rhodes.identifiers import ServiceArn
+from rhodes.states import State, StateMachine
+from rhodes.structures import JsonPath, Parameters
+
+StateMirror = TypeVar("StateMirror", bound=State)
+StateMachineMirror = TypeVar("StateMachineMirror", bound=StateMachine)
+ChoiceRuleMirror = TypeVar("ChoiceRuleMirror", bound=ChoiceRule)
+
+# path inputs
+PATH_INPUT = Union[str, Enum, jsonpath_rw.JSONPath, JsonPath]
+
+TITLE = str
+COMMENT = Optional[str]
+NEXT = Optional[str]
+END = Optional[bool]
+INPUT_PATH = Optional[JsonPath]
+OUTPUT_PATH = Optional[JsonPath]
+RESULT_PATH = Optional[JsonPath]
+PARAMETERS = Optional[Parameters]
+CATCH = Optional[Any]
+RETRY = Optional[Any]
+TIMEOUT_SECONDS = Optional[int]
+HEARTBEAT_SECONDS = Optional[int]
+
+# resource types for the type stub to use
+TASK_RESOURCE = Union[ServiceArn, str, awslambda.Function, stepfunctions.Activity, Ref, GetAtt]

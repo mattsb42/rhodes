@@ -5,8 +5,10 @@ https://docs.aws.amazon.com/step-functions/latest/dg/connect-ddb.html
 import attr
 from attr.validators import instance_of
 
-from rhodes._util import RequiredValue
-from rhodes.states.services import IntegrationPattern, ServiceArn, ServiceIntegration, _supports_patterns
+from rhodes._util import RHODES_ATTRIB, RequiredValue
+from rhodes.identifiers import IntegrationPattern, ServiceArn
+from rhodes.states.services import ServiceIntegration
+from rhodes.states.services.util import supports_patterns
 
 __all__ = (
     "AmazonDynamoDb",
@@ -16,11 +18,12 @@ __all__ = (
     "AmazonDynamoDbUpdateItem",
 )
 
-_ddb_supports_patterns = _supports_patterns(IntegrationPattern.REQUEST_RESPONSE)
+_ddb_supports_patterns = supports_patterns(IntegrationPattern.REQUEST_RESPONSE)
 
 
+@attr.s
 class AmazonDynamoDb:
-    TableName = attr.ib(validator=instance_of(str))
+    TableName = RHODES_ATTRIB(validator=instance_of(str))
 
     def get_item(self, **kwargs):
         return AmazonDynamoDbGetItem(TableName=self.TableName, **kwargs)
@@ -36,26 +39,26 @@ class AmazonDynamoDb:
 
 
 def _ddb_table_name(cls: ServiceIntegration) -> ServiceIntegration:
-    cls.TableName = attr.ib(default=None)
+    cls.TableName = RHODES_ATTRIB()
 
     return cls
 
 
 def _ddb_key(cls: ServiceIntegration) -> ServiceIntegration:
-    cls.Key = attr.ib(default=None)
+    cls.Key = RHODES_ATTRIB()
 
     return cls
 
 
 def _ddb_write_attributes(cls: ServiceIntegration) -> ServiceIntegration:
-    cls.ConditionalOperator = attr.ib(default=None)
-    cls.ConditionExpression = attr.ib(default=None)
-    cls.Expected = attr.ib(default=None)
-    cls.ExpressionAttributeNames = attr.ib(default=None)
-    cls.ExpressionAttributeValues = attr.ib(default=None)
-    cls.ReturnConsumedCapacity = attr.ib(default=None)
-    cls.ReturnItemCollectionMetrics = attr.ib(default=None)
-    cls.ReturnValues = attr.ib(default=None)
+    cls.ConditionalOperator = RHODES_ATTRIB()
+    cls.ConditionExpression = RHODES_ATTRIB()
+    cls.Expected = RHODES_ATTRIB()
+    cls.ExpressionAttributeNames = RHODES_ATTRIB()
+    cls.ExpressionAttributeValues = RHODES_ATTRIB()
+    cls.ReturnConsumedCapacity = RHODES_ATTRIB()
+    cls.ReturnItemCollectionMetrics = RHODES_ATTRIB()
+    cls.ReturnValues = RHODES_ATTRIB()
 
     return cls
 
@@ -64,7 +67,7 @@ def _ddb_write_attributes(cls: ServiceIntegration) -> ServiceIntegration:
 @_ddb_key
 @_ddb_table_name
 @_ddb_supports_patterns
-class AmazonDynamoDbGetItem(IntegrationPattern):
+class AmazonDynamoDbGetItem(ServiceIntegration):
     _required_fields = (
         RequiredValue("Key", "Amazon DynamoDB GetItem Task requires a key value"),
         RequiredValue("TableName", "Amazon DynamoDB GetItem Task requires a table value"),
@@ -74,18 +77,18 @@ class AmazonDynamoDbGetItem(IntegrationPattern):
     # TODO: Sort out validation rules
     #  https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html#DDB-GetItem-request-Key
 
-    AttributesToGet = attr.ib(default=None)
-    ConsistentRead = attr.ib(default=None)
-    ExpressionAttributeNames = attr.ib(default=None)
-    ProjectionExpression = attr.ib(default=None)
-    ReturnConsumedCapacity = attr.ib(default=None)
+    AttributesToGet = RHODES_ATTRIB()
+    ConsistentRead = RHODES_ATTRIB()
+    ExpressionAttributeNames = RHODES_ATTRIB()
+    ProjectionExpression = RHODES_ATTRIB()
+    ReturnConsumedCapacity = RHODES_ATTRIB()
 
 
 @attr.s(eq=False)
 @_ddb_write_attributes
 @_ddb_table_name
 @_ddb_supports_patterns
-class AmazonDynamoDbPutItem(IntegrationPattern):
+class AmazonDynamoDbPutItem(ServiceIntegration):
     _required_fields = (
         RequiredValue("Item", "Amazon DynamoDB PutItem Task requires an item value"),
         RequiredValue("TableName", "Amazon DynamoDB PutItem Task requires a table value"),
@@ -95,7 +98,7 @@ class AmazonDynamoDbPutItem(IntegrationPattern):
     # TODO: Sort out validation rules
     #  https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html#DDB-PutItem-request-Item
 
-    Item = attr.ib(default=None)
+    Item = RHODES_ATTRIB()
 
 
 @attr.s(eq=False)
@@ -103,7 +106,7 @@ class AmazonDynamoDbPutItem(IntegrationPattern):
 @_ddb_key
 @_ddb_table_name
 @_ddb_supports_patterns
-class AmazonDynamoDbDeleteItem(IntegrationPattern):
+class AmazonDynamoDbDeleteItem(ServiceIntegration):
     _required_fields = (
         RequiredValue("Item", "Amazon DynamoDB DeleteItem Task requires a key value"),
         RequiredValue("TableName", "Amazon DynamoDB DeleteItem Task requires a table value"),
@@ -119,7 +122,7 @@ class AmazonDynamoDbDeleteItem(IntegrationPattern):
 @_ddb_key
 @_ddb_table_name
 @_ddb_supports_patterns
-class AmazonDynamoDbUpdateItem(IntegrationPattern):
+class AmazonDynamoDbUpdateItem(ServiceIntegration):
     _required_fields = (
         RequiredValue("Item", "Amazon DynamoDB UpdateItem Task requires a key value"),
         RequiredValue("TableName", "Amazon DynamoDB UpdateItem Task requires a table value"),
@@ -129,5 +132,5 @@ class AmazonDynamoDbUpdateItem(IntegrationPattern):
     # TODO: Sort out validation rules
     #  https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html#API_UpdateItem_RequestParameters
 
-    AttributeUpdates = attr.ib(default=None)
-    UpdateExpression = attr.ib(default=None)
+    AttributeUpdates = RHODES_ATTRIB()
+    UpdateExpression = RHODES_ATTRIB()

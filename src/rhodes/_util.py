@@ -1,9 +1,12 @@
 """Utilities for use in Rhodes."""
+from functools import partial
 from typing import Any, Callable
 
 import attr
 
 from .exceptions import InvalidDefinitionError
+
+__all__ = ("RequiredValue", "require_field", "RHODES_ATTRIB")
 
 
 @attr.s(auto_attribs=True)
@@ -20,3 +23,6 @@ def require_field(*, instance: Any, required_value: RequiredValue, validator: Ca
 
     if not validator(getattr(instance, required_value.field_name)):
         raise InvalidDefinitionError(required_value.error_message)
+
+
+RHODES_ATTRIB = partial(attr.ib, default=None, kw_only=True)

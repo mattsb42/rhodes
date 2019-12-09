@@ -1,10 +1,10 @@
 """Unit test suite for ``rhodes.states.services.awslambda``."""
 import pytest
 
-from rhodes.states import Parameters, Task
-from rhodes.states.services import IntegrationPattern
+from rhodes.states import Task
 from rhodes.states.services.awslambda import AwsLambda
-from rhodes.structures import JsonPath
+from rhodes.states.services.util import IntegrationPattern
+from rhodes.structures import Parameters
 
 pytestmark = [pytest.mark.local, pytest.mark.functional]
 
@@ -15,14 +15,16 @@ def test_aws_lambda_request_response():
         Resource="arn:aws:states:::lambda:invoke",
         Parameters=Parameters(
             FunctionName="arn:aws:lambda:us-east-1:123456789012:function:ship-val",
-            Payload={"test": "value"},
+            Payload=Parameters(test="value"),
             InvocationType="RequestResponse",
         ),
     )
     expected = expected_task.to_dict()
 
     test_task = AwsLambda(
-        "TestTask", FunctionName="arn:aws:lambda:us-east-1:123456789012:function:ship-val", Payload={"test": "value"}
+        "TestTask",
+        FunctionName="arn:aws:lambda:us-east-1:123456789012:function:ship-val",
+        Payload=Parameters(test="value"),
     )
     test = test_task.to_dict()
 
@@ -35,7 +37,7 @@ def test_aws_lambda_callback():
         Resource="arn:aws:states:::lambda:invoke.waitForTaskToken",
         Parameters=Parameters(
             FunctionName="arn:aws:lambda:us-east-1:123456789012:function:ship-val",
-            Payload={"test": "value"},
+            Payload=Parameters(test="value"),
             InvocationType="RequestResponse",
         ),
     )
@@ -45,7 +47,7 @@ def test_aws_lambda_callback():
         "TestTask",
         Pattern=IntegrationPattern.WAIT_FOR_CALLBACK,
         FunctionName="arn:aws:lambda:us-east-1:123456789012:function:ship-val",
-        Payload={"test": "value"},
+        Payload=Parameters(test="value"),
     )
     test = test_task.to_dict()
 

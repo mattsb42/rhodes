@@ -4,36 +4,44 @@ https://docs.aws.amazon.com/step-functions/latest/dg/connect-sagemaker.html
 """
 import attr
 
-from rhodes._util import RequiredValue
-from rhodes.states.services import IntegrationPattern, ServiceArn, ServiceIntegration, _supports_patterns
+from rhodes._util import RHODES_ATTRIB, RequiredValue
+from rhodes.identifiers import IntegrationPattern
+from rhodes.states.services import ServiceIntegration
+from rhodes.states.services.util import supports_patterns
 
-__all__ = ("AmazonSageMaker",)
+__all__ = (
+    "AmazonSageMakerCreateEndpoint",
+    "AmazonSageMakerCreateEndpointConfig",
+    "AmazonSageMakerCreateHyperParameterTuningJob",
+    "AmazonSageMakerCreateLabelingJob",
+    "AmazonSageMakerCreateModel",
+    "AmazonSageMakerCreateTrainingJob",
+    "AmazonSageMakerCreateTransformJob",
+    "AmazonSageMakerUpdateEndpoint",
+)
 
-_sagemaker_supports_patterns = _supports_patterns(IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.SYNCHRONOUS)
+_sagemaker_supports_patterns = supports_patterns(IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.SYNCHRONOUS)
 
 
 def _tags(cls: ServiceIntegration) -> ServiceIntegration:
-    cls.Tags = attr.ib(default=None)
+    cls.Tags = RHODES_ATTRIB()
 
     return cls
 
 
 def _endpoint_config_name(cls: ServiceIntegration) -> ServiceIntegration:
-    cls.EndpointConfigName = attr.ib(default=None)
+    cls.EndpointConfigName = RHODES_ATTRIB()
 
     return cls
 
 
 def _endpoint_name(cls: ServiceIntegration) -> ServiceIntegration:
-    cls.EndpointName = attr.ib(default=None)
+    cls.EndpointName = RHODES_ATTRIB()
 
     return cls
 
 
-@attr.s(eq=False)
-@_sagemaker_supports_patterns
-class AmazonSageMaker(ServiceIntegration):
-    pass
+# TODO: Create an AamzonSageMaker single entry point helper like AmazonDynamoDb
 
 
 @attr.s(eq=False)
@@ -60,8 +68,8 @@ class AmazonSageMakerCreateEndpointConfig(ServiceIntegration):
     # TODO: Sort out validation rules
     #  https://docs.aws.amazon.com/sagemaker/latest/dg/API_CreateEndpointConfig.html#API_CreateEndpointConfig_RequestParameters
 
-    KmsKeyId = attr.ib(default=None)
-    ProductionVariants = attr.ib(default=None)
+    KmsKeyId = RHODES_ATTRIB()
+    ProductionVariants = RHODES_ATTRIB()
 
 
 @attr.s(eq=False)
@@ -74,10 +82,10 @@ class AmazonSageMakerCreateHyperParameterTuningJob(ServiceIntegration):
     # TODO: Sort out validation rules
     #  https://docs.aws.amazon.com/sagemaker/latest/dg/API_CreateHyperParameterTuningJob.html#API_CreateHyperParameterTuningJob_RequestParameters
 
-    HyperParameterTuningJobConfig = attr.ib(default=None)
-    HyperParameterTuningJobName = attr.ib(default=None)
-    TrainingJobDefinition = attr.ib(default=None)
-    WarmStartConfig = attr.ib(default=None)
+    HyperParameterTuningJobConfig = RHODES_ATTRIB()
+    HyperParameterTuningJobName = RHODES_ATTRIB()
+    TrainingJobDefinition = RHODES_ATTRIB()
+    WarmStartConfig = RHODES_ATTRIB()
 
 
 @attr.s(eq=False)
@@ -90,15 +98,15 @@ class AmazonSageMakerCreateLabelingJob(ServiceIntegration):
     # TODO: Sort out validation rules
     #  https://docs.aws.amazon.com/sagemaker/latest/dg/API_CreateLabelingJob.html#API_CreateLabelingJob_RequestParameters
 
-    HumanTaskConfig = attr.ib(default=None)
-    InputConfig = attr.ib(default=None)
-    LabelAttributeName = attr.ib(default=None)
-    LabelCategoryConfigS3Uri = attr.ib(default=None)
-    LabelingJobAlgorithmsConfig = attr.ib(default=None)
-    LabelingJobName = attr.ib(default=None)
-    OutputConfig = attr.ib(default=None)
-    RoleArn = attr.ib(default=None)
-    StoppingConditions = attr.ib(default=None)
+    HumanTaskConfig = RHODES_ATTRIB()
+    InputConfig = RHODES_ATTRIB()
+    LabelAttributeName = RHODES_ATTRIB()
+    LabelCategoryConfigS3Uri = RHODES_ATTRIB()
+    LabelingJobAlgorithmsConfig = RHODES_ATTRIB()
+    LabelingJobName = RHODES_ATTRIB()
+    OutputConfig = RHODES_ATTRIB()
+    RoleArn = RHODES_ATTRIB()
+    StoppingConditions = RHODES_ATTRIB()
 
 
 @attr.s(eq=False)
@@ -111,12 +119,12 @@ class AmazonSageMakerCreateModel(ServiceIntegration):
     # TODO: Sort out validation rules
     #  https://docs.aws.amazon.com/sagemaker/latest/dg/API_CreateModel.html#API_CreateModel_RequestParameters
 
-    Containers = attr.ib(default=None)
-    EnableNetworkIsolation = attr.ib(default=None)
-    ExecutionRoleArn = attr.ib(default=None)
-    ModelName = attr.ib(default=None)
-    PrimaryContainer = attr.ib(default=None)
-    VpcConfig = attr.ib(default=None)
+    Containers = RHODES_ATTRIB()
+    EnableNetworkIsolation = RHODES_ATTRIB()
+    ExecutionRoleArn = RHODES_ATTRIB()
+    ModelName = RHODES_ATTRIB()
+    PrimaryContainer = RHODES_ATTRIB()
+    VpcConfig = RHODES_ATTRIB()
 
 
 @attr.s(eq=False)
@@ -129,15 +137,15 @@ class AmazonSageMakerCreateTrainingJob(ServiceIntegration):
     # TODO: Sort out validation rules
     #  https://docs.aws.amazon.com/sagemaker/latest/dg/API_CreateTrainingJob.html#API_CreateTrainingJob_RequestParameters
 
-    AlgorithmSpecification = attr.ib(default=None)
-    HyperParameters = attr.ib(default=None)
-    InputDataConfig = attr.ib(default=None)
-    OutputDataConfig = attr.ib(default=None)
-    ResourceConfig = attr.ib(default=None)
-    RoleArn = attr.ib(default=None)
-    StoppingCondition = attr.ib(default=None)
-    TrainingJobName = attr.ib(default=None)
-    VpcConfig = attr.ib(default=None)
+    AlgorithmSpecification = RHODES_ATTRIB()
+    HyperParameters = RHODES_ATTRIB()
+    InputDataConfig = RHODES_ATTRIB()
+    OutputDataConfig = RHODES_ATTRIB()
+    ResourceConfig = RHODES_ATTRIB()
+    RoleArn = RHODES_ATTRIB()
+    StoppingCondition = RHODES_ATTRIB()
+    TrainingJobName = RHODES_ATTRIB()
+    VpcConfig = RHODES_ATTRIB()
 
 
 @attr.s(eq=False)
@@ -150,15 +158,15 @@ class AmazonSageMakerCreateTransformJob(ServiceIntegration):
     # TODO: Sort out validation rules
     #  https://docs.aws.amazon.com/sagemaker/latest/dg/API_CreateTransformJob.html#API_CreateTransformJob_RequestParameters
 
-    BatchStrategy = attr.ib(default=None)
-    Environment = attr.ib(default=None)
-    MaxConcurrentTransforms = attr.ib(default=None)
-    MaxPayloadInMB = attr.ib(default=None)
-    ModelName = attr.ib(default=None)
-    TransformInput = attr.ib(default=None)
-    TransformJobName = attr.ib(default=None)
-    TransformOutput = attr.ib(default=None)
-    TransformResources = attr.ib(default=None)
+    BatchStrategy = RHODES_ATTRIB()
+    Environment = RHODES_ATTRIB()
+    MaxConcurrentTransforms = RHODES_ATTRIB()
+    MaxPayloadInMB = RHODES_ATTRIB()
+    ModelName = RHODES_ATTRIB()
+    TransformInput = RHODES_ATTRIB()
+    TransformJobName = RHODES_ATTRIB()
+    TransformOutput = RHODES_ATTRIB()
+    TransformResources = RHODES_ATTRIB()
 
 
 @attr.s(eq=False)

@@ -2,6 +2,23 @@
 Changelog
 *********
 
+0.5.0 -- 2019-12-??
+===================
+
+* **BREAKING CHANGE:** ``AwsLambda`` now requires ``Payload`` to be a ``Parameters`` instance.
+* ``AwsStepFunctions`` no longer allows the definition of an execution name.
+
+   * NOTE: This is only *not* a breaking change because ``AwsStepFunctions`` was fundamentally broken before.
+
+* **BREAKING CHANGE:** ``AwsBatch`` now required ``Parameters`` to be a ``Parameters`` instance.
+* **BREAKING CHANGE:** All parameters for ``State`` classes other than ``title`` are now keyword-only.
+* **BREAKING CHANGE:** Most parameters are now keyword-only.
+
+bugfixes
+--------
+
+* Fixed ``AwsStepFunctions`` parameters names.
+
 0.4.0 -- 2019-12-03
 ===================
 

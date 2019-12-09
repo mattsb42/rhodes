@@ -1,13 +1,40 @@
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
+from typing import Any, Type, overload
 
 import attr
 from attr.validators import deep_iterable, instance_of, optional
 
-from ._converters import convert_to_json_path
-from .exceptions import InvalidDefinitionError
-from .structures import JsonPath
+from rhodes._util import RHODES_ATTRIB
+from rhodes.exceptions import InvalidDefinitionError
+from rhodes.structures import JsonPath
+
+__all__ = (
+    "VariablePath",
+    "ChoiceRule",
+    "StringEquals",
+    "StringGreaterThan",
+    "StringGreaterThanEquals",
+    "StringLessThan",
+    "StringLessThanEquals",
+    "NumericEquals",
+    "NumericGreaterThan",
+    "NumericGreaterThanEquals",
+    "NumericLessThan",
+    "NumericLessThanEquals",
+    "BooleanEquals",
+    "TimestampEquals",
+    "TimestampGreaterThan",
+    "TimestampGreaterThanEquals",
+    "TimestampLessThan",
+    "TimestampLessThanEquals",
+    "And",
+    "Or",
+    "Not",
+    "all_",
+    "any_",
+)
 
 
 class VariablePath(JsonPath):
@@ -15,23 +42,23 @@ class VariablePath(JsonPath):
 
     # TODO: Add __and__ and __or__ behaviors?
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any) -> Type["ChoiceRule"]:
         return derive_rule(variable=self, operator="<", value=other)
 
-    def __le__(self, other):
+    def __le__(self, other: Any) -> Type["ChoiceRule"]:
         return derive_rule(variable=self, operator="<=", value=other)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> Type["ChoiceRule"]:
         return derive_rule(variable=self, operator="==", value=other)
 
-    def __ne__(self, other):
+    def __ne__(self, other: Any) -> "Not":
         inner_rule = derive_rule(variable=self, operator="==", value=other)
         return Not(Rule=inner_rule)
 
-    def __gt__(self, other):
+    def __gt__(self, other: Any) -> Type["ChoiceRule"]:
         return derive_rule(variable=self, operator=">", value=other)
 
-    def __ge__(self, other):
+    def __ge__(self, other: Any) -> Type["ChoiceRule"]:
         return derive_rule(variable=self, operator=">=", value=other)
 
 
@@ -69,8 +96,8 @@ def _convert_to_variable_path(value) -> VariablePath:
 
 
 def _single(cls):
-    cls.Variable = attr.ib(validator=instance_of(VariablePath), converter=_convert_to_variable_path)
-    cls.Next = attr.ib(default=None, validator=optional(instance_of(str)))
+    cls.Variable = RHODES_ATTRIB(validator=instance_of(VariablePath), converter=_convert_to_variable_path)
+    cls.Next = RHODES_ATTRIB(validator=optional(instance_of(str)))
     cls.to_dict = _single_to_dict
 
     return cls
@@ -96,15 +123,15 @@ def _validate_multi_subrules(instance, attribute, value):
 
 
 def _multi(cls):
-    cls.Rules = attr.ib(validator=_validate_multi_subrules)
-    cls.Next = attr.ib(default=None, validator=optional(instance_of(str)))
+    cls.Rules = RHODES_ATTRIB(validator=_validate_multi_subrules)
+    cls.Next = RHODES_ATTRIB(validator=optional(instance_of(str)))
     cls.to_dict = _multi_to_dict
 
     return cls
 
 
 def _string(cls):
-    cls.Value = attr.ib(validator=instance_of(str))
+    cls.Value = RHODES_ATTRIB(validator=instance_of(str))
     cls = _single(cls)
 
     return cls
@@ -127,7 +154,7 @@ def _number(cls):
     #  In particular,
     #  integers outside of the range [-(253)+1, (253)-1]
     #  might fail to compare in the expected way.
-    cls.Value = attr.ib(validator=instance_of(Decimal), converter=_numeric_converter)
+    cls.Value = RHODES_ATTRIB(validator=instance_of(Decimal), converter=_numeric_converter)
     cls._serialized_value = _value_serializer
     cls = _single(cls)
 
@@ -135,7 +162,7 @@ def _number(cls):
 
 
 def _bool(cls):
-    cls.Value = attr.ib(validator=instance_of(bool))
+    cls.Value = RHODES_ATTRIB(validator=instance_of(bool))
     cls = _single(cls)
 
     return cls
@@ -149,7 +176,7 @@ def _timestamp(cls):
     def _value_serializer(instance):
         return instance.Value.isoformat()
 
-    cls.Value = attr.ib(validator=[instance_of(datetime), _datetime_validator])
+    cls.Value = RHODES_ATTRIB(validator=[instance_of(datetime), _datetime_validator])
     cls._serialized_value = _value_serializer
     cls = _single(cls)
 
@@ -160,12 +187,17 @@ def _timestamp(cls):
 class ChoiceRule:
 
     member_of = None
+    Value = NotImplemented
+    Next = NotImplemented
+
+    def to_dict(self):
+        raise NotImplementedError()
 
     def __eq__(self, other: "ChoiceRule") -> bool:
         if not isinstance(other, self.__class__):
             return False
 
-        if not self.to_dict() == other.to_dict():
+        if self.to_dict() != other.to_dict():
             return False
 
         if self.member_of != other.member_of:
@@ -300,8 +332,8 @@ class Or(ChoiceRule):
 
 @attr.s(eq=False)
 class Not(ChoiceRule):
-    Rule = attr.ib(validator=instance_of(ChoiceRule))
-    Next = attr.ib(default=None, validator=optional(instance_of(str)))
+    Rule = RHODES_ATTRIB(validator=instance_of(ChoiceRule))
+    Next = RHODES_ATTRIB(validator=optional(instance_of(str)))
 
     @Rule.validator
     def _validate_rule(self, attribute, value):
@@ -348,7 +380,7 @@ _OPERATORS = {
 _TYPE_MAP = {bool: "boolean", int: "number", float: "number", Decimal: "number", str: "string", datetime: "time"}
 
 
-def derive_rule(*, variable: VariablePath, operator: str, value) -> ChoiceRule:
+def derive_rule(*, variable: VariablePath, operator: str, value) -> Type[ChoiceRule]:
     if isinstance(value, Enum):
         value = value.value
 

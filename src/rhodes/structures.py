@@ -1,11 +1,13 @@
 """Other structures for Rhodes."""
-from typing import Union
+from typing import Any, Dict, Union
 
 import attr
 import jsonpath_rw
 from attr.validators import instance_of
 
-__all__ = ("JsonPath", "ContextPath")
+from rhodes._serialization import serialize_name_and_value
+
+__all__ = ("JsonPath", "ContextPath", "Parameters")
 
 
 def _convert_path(value: Union[str, jsonpath_rw.JSONPath, "JsonPath"]) -> jsonpath_rw.JSONPath:
@@ -26,6 +28,9 @@ class JsonPath:
 
     def __str__(self):
         return str(self.path)
+
+    def to_dict(self) -> str:
+        return str(self)
 
 
 @attr.s
@@ -88,5 +93,30 @@ class ContextPath:
     def __str__(self):
         return self._path
 
+    def to_dict(self) -> str:
+        return str(self)
+
     def __getattr__(self, item):
         return ContextPath(f"{self._path}.{item}")
+
+
+class Parameters:
+    def __init__(self, **kwargs):
+        self._map = kwargs
+
+    def to_dict(self) -> Dict[str, Any]:
+        def _inner():
+            for name, value in self._map.items():
+                new_name, new_value = serialize_name_and_value(name=name, value=value)
+
+                if isinstance(value, JsonPath) or isinstance(value, ContextPath):
+                    # If you manually provide path strings, you must manually set the parameter suffix.
+                    if not new_name.endswith(".$"):
+                        new_name += ".$"
+
+                yield new_name, new_value
+
+        return dict(_inner())
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}({', '.join(f'{name}={value!r}' for name, value in self._map.items())})"
