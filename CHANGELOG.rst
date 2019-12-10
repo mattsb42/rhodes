@@ -2,11 +2,14 @@
 Changelog
 *********
 
-0.5.2 -- 2019-12-09
+0.5.2 -- 2019-12-10
 ===================
 
 * Fixed incorrect kw-only split for ``AwsStepFunctions`` type signature.
   `#55 <https://github.com/mattsb42/rhodes/issues/55>`_
+* Fixed too-strict type restrictions.
+  `#54 <https://github.com/mattsb42/rhodes/issues/54>`_
+  `#56 <https://github.com/mattsb42/rhodes/issues/56>`_
 
 
 0.5.1 -- 2019-12-09
