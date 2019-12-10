@@ -5,7 +5,7 @@ https://docs.aws.amazon.com/step-functions/latest/dg/connect-sagemaker.html
 import attr
 
 from rhodes._util import RHODES_ATTRIB, RequiredValue
-from rhodes.identifiers import IntegrationPattern
+from rhodes.identifiers import IntegrationPattern, ServiceArn
 from rhodes.states.services import ServiceIntegration
 from rhodes.states.services.util import supports_patterns
 

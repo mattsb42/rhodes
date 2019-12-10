@@ -2,10 +2,7 @@
 
 https://docs.aws.amazon.com/step-functions/latest/dg/connect-batch.html
 """
-from typing import Iterable
-
 import attr
-from attr.validators import instance_of
 
 from rhodes._util import RHODES_ATTRIB, RequiredValue
 from rhodes.identifiers import IntegrationPattern, ServiceArn
@@ -32,12 +29,12 @@ class AwsBatch(ServiceIntegration):
     # The ARN/name
     JobDefinition = RHODES_ATTRIB()
     # unique name...does SFn actually require this?
-    JobName: str = RHODES_ATTRIB(validator=instance_of(str))
+    JobName = RHODES_ATTRIB()
     # ??? ARN for something?
     JobQueue = RHODES_ATTRIB()
-    Parameters: Parameters = RHODES_ATTRIB(validator=instance_of(Parameters))
+    Parameters: Parameters = RHODES_ATTRIB()
     # TODO: These others feel like things that should already exist in Troposphere
-    ArrayProperties: Iterable = RHODES_ATTRIB()
+    ArrayProperties = RHODES_ATTRIB()
     ContainerOverrides = RHODES_ATTRIB()
     DependsOn = RHODES_ATTRIB()
     RetryStrategy = RHODES_ATTRIB()

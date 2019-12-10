@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Any, Optional, TypeVar, Union
 
 import jsonpath_rw
-from troposphere import GetAtt, Ref, awslambda, stepfunctions
+from troposphere import AWSHelperFn, awslambda, stepfunctions
 
 from rhodes.choice_rules import ChoiceRule
 from rhodes.identifiers import ServiceArn
@@ -30,4 +30,8 @@ TIMEOUT_SECONDS = Optional[int]
 HEARTBEAT_SECONDS = Optional[int]
 
 # resource types for the type stub to use
-TASK_RESOURCE = Union[ServiceArn, str, awslambda.Function, stepfunctions.Activity, Ref, GetAtt]
+TASK_RESOURCE = Union[ServiceArn, str, awslambda.Function, stepfunctions.Activity, AWSHelperFn]
+
+SERVICE_INTEGRATION_SIMPLE_VALUE = Union[str, JsonPath, Enum, AWSHelperFn]
+SERVICE_INTEGRATION_COMPLEX_VALUE = Union[JsonPath, Enum, AWSHelperFn, Parameters]
+AWS_LAMBDA_FUNCTION = Union[str, JsonPath, Enum, AWSHelperFn, awslambda.Function]

@@ -1,6 +1,18 @@
 from typing import Any, Optional
 
-from rhodes._types import CATCH, COMMENT, END, HEARTBEAT_SECONDS, NEXT, PATH_INPUT, RETRY, TIMEOUT_SECONDS, TITLE
+from rhodes._types import (
+    CATCH,
+    COMMENT,
+    END,
+    HEARTBEAT_SECONDS,
+    NEXT,
+    PATH_INPUT,
+    RETRY,
+    SERVICE_INTEGRATION_COMPLEX_VALUE,
+    SERVICE_INTEGRATION_SIMPLE_VALUE,
+    TIMEOUT_SECONDS,
+    TITLE,
+)
 from rhodes.identifiers import IntegrationPattern
 from rhodes.states.services import ServiceIntegration
 from rhodes.structures import JsonPath, Parameters
@@ -21,7 +33,7 @@ class AwsBatch(ServiceIntegration):
         TimeoutSeconds: TIMEOUT_SECONDS = None,
         HeartbeatSeconds: HEARTBEAT_SECONDS = None,
         JobDefinition: Optional[Any] = None,
-        JobName: Optional[str] = None,
+        JobName: Optional[Any] = None,
         JobQueue: Optional[Any] = None,
         Parameters: Parameters = None,
         ArrayProperties: Optional[Any] = None,
@@ -32,7 +44,7 @@ class AwsBatch(ServiceIntegration):
         Pattern: IntegrationPattern = IntegrationPattern.REQUEST_RESPONSE,
     ): ...
     JobDefinition: Optional[Any]
-    JobName: Optional[str]
+    JobName: Optional[Any]
     JobQueue: Optional[Any]
     Parameters: Parameters
     ArrayProperties: Optional[Any]
