@@ -49,7 +49,7 @@ class ContextPath:
             "State": {"EnteredTime": False, "Name": False, "RetryCount": False},
             "StateMachine": {"Id": False},
             "Task": {"Token": False},
-            "Map": {"Item": {"Index": False, "Value": False}},
+            "Map": {"Item": {"Index": False, "Value": True}},
         }
 
         def _validate_parts(tree, fields):
