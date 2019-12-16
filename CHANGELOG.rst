@@ -2,6 +2,17 @@
 Changelog
 *********
 
+0.5.3 -- 2019-12-16
+===================
+
+bugfixes
+--------
+
+* Fix ``Pass`` type stub to include ``Result``.
+  `#61 <https://github.com/mattsb42/rhodes/issues/61>`_
+* Fix ``ContextPath`` to allow indexing inside of ``Map.Item.Value``.
+  `#62 <https://github.com/mattsb42/rhodes/issues/62>`_
+
 0.5.2 -- 2019-12-10
 ===================
 
