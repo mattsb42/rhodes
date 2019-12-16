@@ -1,4 +1,4 @@
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional, Any
 
 import attr
 from troposphere import Sub
@@ -69,6 +69,7 @@ class Pass(State):
         OutputPath: PATH_INPUT = JsonPath("$"),
         ResultPath: PATH_INPUT = JsonPath("$"),
         Parameters: PARAMETERS = None,
+        Result: Optional[Any] = None,
     ) -> None: ...
     Next: NEXT
     End: END
@@ -76,6 +77,7 @@ class Pass(State):
     OutputPath: OUTPUT_PATH
     ResultPath: RESULT_PATH
     Parameters: PARAMETERS
+    Result: Optional[Any]
     def then(self, next_state: StateMirror) -> StateMirror: ...
     def end(self) -> Pass: ...
 
