@@ -22,13 +22,16 @@ _VALID_STATIC_CONTEXT_PATHS = (
     "$$.Map",
     "$$.Map.Item",
     "$$.Map.Item.Index",
-    "$$.Map.Item.Value",
 )
 _VALID_CONTEXT_PATHS_WITH_INPUT = _VALID_STATIC_CONTEXT_PATHS + (
     "$$.Execution.Input",
     "$$.Execution.Input.foo",
     "$$.Execution.Input.foo.bar",
     "$$.Execution.Input.foo.bar.baz",
+    "$$.Map.Item.Value",
+    "$$.Map.Item.Value.foo",
+    "$$.Map.Item.Value.foo.bar",
+    "$$.Map.Item.Value.foo.bar.baz",
 )
 
 
