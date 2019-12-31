@@ -8,16 +8,9 @@
    versioning
    changelog
 
-***
-API
-***
-
 .. toctree::
    :maxdepth: 2
-   :caption: Public API
+   :caption: Usage
 
-   lib/api/index
-
-.. _AWS Step Functions: https://docs.aws.amazon.com/step-functions/latest/dg/welcome.html
-.. _AWS CloudFormation: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html
-.. _Troposphere: https://troposphere.readthedocs.io
+   by_example/index
+   api/index

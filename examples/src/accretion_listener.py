@@ -6,8 +6,8 @@ The JSON definition can be found in this directory in the "accretion_listener.js
 https://accretion.readthedocs.io/en/latest/src/overview.html
 """
 from rhodes.choice_rules import VariablePath, all_
-from rhodes.states import Choice, Fail, Parameters, StateMachine, Succeed, Task, Wait
-from rhodes.structures import JsonPath
+from rhodes.states import Choice, Fail, StateMachine, Succeed, Task, Wait
+from rhodes.structures import JsonPath, Parameters
 
 
 def build() -> StateMachine:
@@ -15,7 +15,11 @@ def build() -> StateMachine:
     workflow = StateMachine(Comment="Replication Listener")
 
     event_filter = workflow.start_with(
-        Task("Filter", Resource="arn:aws:lambda:us-east-1:123456789012:function:event-filter", ResultPath="$")
+        Task(
+            "Filter",
+            Resource="arn:aws:lambda:us-east-1:123456789012:function:event-filter",
+            ResultPath="$",
+        )
     )
     skip_check = event_filter.then(Choice("ShouldProcess"))
     skip_check.else_(Succeed("IgnoreEvent", Comment="Ignore this event"))
@@ -41,14 +45,20 @@ def build() -> StateMachine:
             "Notify",
             Resource="arn:aws:states:::sns:publish",
             Parameters=Parameters(
-                TopicArn="arn:aws:sns:us-east-1:123456789012:accretion-notify", Message=JsonPath("$.Layer")
+                TopicArn="arn:aws:sns:us-east-1:123456789012:accretion-notify",
+                Message=JsonPath("$.Layer"),
             ),
         )
     ).end()
 
     artifact_check.if_(
-        all_(VariablePath("$.Artifact.Found") == False, VariablePath("$.Artifact.ReadAttempts") > 15)
-    ).then(Fail("ReplicationTimeout", Error="Timed out waiting for artifact to replicate"))
+        all_(
+            VariablePath("$.Artifact.Found") == False,
+            VariablePath("$.Artifact.ReadAttempts") > 15,
+        )
+    ).then(
+        Fail("ReplicationTimeout", Error="Timed out waiting for artifact to replicate")
+    )
 
     waiter = artifact_check.else_(Wait("WaitForReplication", Seconds=60))
     waiter.then(locate_artifact)

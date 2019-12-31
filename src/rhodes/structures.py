@@ -1,4 +1,4 @@
-"""Other structures for Rhodes."""
+"""Helper structures for Rhodes."""
 from typing import Any, Dict, Union
 
 import attr
@@ -22,7 +22,10 @@ def _convert_path(value: Union[str, jsonpath_rw.JSONPath, "JsonPath"]) -> jsonpa
 
 @attr.s
 class JsonPath:
-    """Represents a JSONPath variable in request/response body."""
+    """Represents a JSONPath variable in request/response body.
+
+    :param path: JSONPath to desired data in state input data
+    """
 
     path: jsonpath_rw.JSONPath = attr.ib(validator=instance_of(jsonpath_rw.JSONPath), converter=_convert_path)
 
@@ -30,14 +33,23 @@ class JsonPath:
         return str(self.path)
 
     def to_dict(self) -> str:
+        """Serialize path for use in serialized state machine definition."""
         return str(self)
 
 
 @attr.s
 class ContextPath:
-    """Represents a JSONPath(ish) variable in the Context Object.
+    """Represents a JSONPath(ish) variable in the `Context Object`_.
 
-    https://docs.aws.amazon.com/step-functions/latest/dg/input-output-contextobject.html
+    :param str path: Path to value in `Context Object`_.
+
+    In addition to specifying the path manually, you can specify valid paths through dot-notation.
+    For example:
+
+    * ``ContextPath("$$.Execution.Id") == ContextPath().Execution.Id``
+    * ``ContextPath("$$.Map.Item.Value.foo.bar") == ContextPath().Map.Item.Value.foo.bar``
+
+    .. _Context Object: https://docs.aws.amazon.com/step-functions/latest/dg/input-output-contextobject.html
     """
 
     _path: str = attr.ib(default="$$")
@@ -94,6 +106,7 @@ class ContextPath:
         return self._path
 
     def to_dict(self) -> str:
+        """Serialize path for use in serialized state machine definition."""
         return str(self)
 
     def __getattr__(self, item):
@@ -101,10 +114,27 @@ class ContextPath:
 
 
 class Parameters:
+    """Represents parameters that can be passed to various state fields.
+
+    If a :class:`JsonPath` is provided as a field value,
+    the field name will be automatically appended with a ``.$`` value
+    when the state machine is serialized
+    to indicate to Step Functions to de-reference the value.
+
+    For example:
+
+    .. code-block:: python
+
+       >>> Parameters(foo=bar, baz=JsonPath("$.wat.wow")).to_dict()
+       {"foo": "bar", "baz.$": "$.wat.wow"}
+    """
+
     def __init__(self, **kwargs):
         self._map = kwargs
 
     def to_dict(self) -> Dict[str, Any]:
+        """Serialize parameters for use in serialized state machine definition."""
+
         def _inner():
             for name, value in self._map.items():
                 new_name, new_value = serialize_name_and_value(name=name, value=value)

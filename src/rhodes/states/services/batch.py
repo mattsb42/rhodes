@@ -1,21 +1,32 @@
-"""AWS Batch Integrations for Task states.
-
-https://docs.aws.amazon.com/step-functions/latest/dg/connect-batch.html
+"""
+`AWS Batch <https://docs.aws.amazon.com/step-functions/latest/dg/connect-batch.html>`_ Task state.
 """
 import attr
 
 from rhodes._util import RHODES_ATTRIB, RequiredValue
 from rhodes.identifiers import IntegrationPattern, ServiceArn
-from rhodes.states.services import ServiceIntegration
-from rhodes.states.services.util import supports_patterns
+from rhodes.states import State
+from rhodes.states.services._util import service_integration
 from rhodes.structures import Parameters
 
 __all__ = ("AwsBatch",)
 
 
 @attr.s(eq=False)
-@supports_patterns(IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.SYNCHRONOUS)
-class AwsBatch(ServiceIntegration):
+@service_integration(IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.SYNCHRONOUS)
+class AwsBatch(State):
+    """
+    :param JobDefinition:
+    :param JobName:
+    :param JobQueue:
+    :param Parameters:
+    :param ArrayProperties:
+    :param ContainerOverrides:
+    :param DependsOn:
+    :param RetryStrategy:
+    :param Timeout:
+    """
+
     _required_fields = (
         RequiredValue("JobDefinition", "AWS Batch Task requires a job definition."),
         RequiredValue("JobName", "AWS Batch Task requires a job name."),

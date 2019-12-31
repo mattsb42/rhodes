@@ -46,6 +46,8 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx_autodoc_typehints",
     "sphinxcontrib.spelling",
+    "sphinx_tabs.tabs",
+    "sphinxcontrib.plantuml",
 ]
 napoleon_include_special_with_doc = False
 

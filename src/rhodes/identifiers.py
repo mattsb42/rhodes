@@ -1,3 +1,4 @@
+"""Static identifiers used within Rhodes."""
 from enum import Enum
 
 __all__ = ("ServiceArn", "IntegrationPattern")
@@ -7,6 +8,14 @@ _SAGEMAKER_BASE_ARN = "arn:aws:states:::sagemaker"
 
 
 class ServiceArn(Enum):
+    """Step Functions `service integrations`_ ARNs.
+
+    Used as ``Resource`` value when creating a :class:`Task`
+    that uses one of these `service integrations`_.
+
+    .. _service integrations: https://docs.aws.amazon.com/step-functions/latest/dg/concepts-service-integrations.html
+    """
+
     AWSLAMBDA = "arn:aws:states:::lambda:invoke"
     BATCH = "arn:aws:states:::batch:submitJob"
     ECS = "arn:aws:states:::ecs:runTask"
@@ -29,6 +38,14 @@ class ServiceArn(Enum):
 
 
 class IntegrationPattern(Enum):
+    """Service integration pattern types.
+
+    Used either when building a `service integration`_ :class:`Task` manually
+    or when configuring a :class:`ServiceIntegration` helper class.
+
+    .. _service integration: https://docs.aws.amazon.com/step-functions/latest/dg/concepts-service-integrations.html
+    """
+
     REQUEST_RESPONSE = ""
     SYNCHRONOUS = ".sync"
     WAIT_FOR_CALLBACK = ".waitForTaskToken"

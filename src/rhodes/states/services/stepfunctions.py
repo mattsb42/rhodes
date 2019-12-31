@@ -1,6 +1,5 @@
-"""AWS Step Functions Integrations for Task states.
-
-https://docs.aws.amazon.com/step-functions/latest/dg/connect-stepfunctions.html
+"""
+`AWS Step Functions <https://docs.aws.amazon.com/step-functions/latest/dg/connect-stepfunctions.html>`_ Task state.
 """
 import attr
 from attr.validators import instance_of, optional
@@ -8,16 +7,24 @@ from attr.validators import instance_of, optional
 from rhodes._runtime_types import SERVICE_INTEGRATION_COMPLEX_VALUE_TYPES, SERVICE_INTEGRATION_SIMPLE_VALUE_TYPES
 from rhodes._util import RHODES_ATTRIB, RequiredValue
 from rhodes.identifiers import IntegrationPattern, ServiceArn
-from rhodes.states.services import ServiceIntegration
-from rhodes.states.services.util import supports_patterns
-from rhodes.structures import Parameters
+from rhodes.states import State
+from rhodes.states.services._util import service_integration
+
+__all__ = ("AwsStepFunctions",)
 
 
 @attr.s(eq=False)
-@supports_patterns(
+@service_integration(
     IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.SYNCHRONOUS, IntegrationPattern.WAIT_FOR_CALLBACK
 )
-class AwsStepFunctions(ServiceIntegration):
+class AwsStepFunctions(State):
+    """
+    :param StateMachineArn: The AWS Step Functions state machine to invoke
+    :type StateMachineArn: :class:`JsonPath`, :class:`AWSHelperFn`, str, or :class:`Enum`
+    :param Input: Data to provide to the state machine as input
+    :type Input: :class:`Parameters`, :class:`JsonPath`, :class:`AWSHelperFn`, dict, str, or :class:`Enum`
+    """
+
     _required_fields = (RequiredValue("StateMachineArn", "AWS Step Functions Task requires a state machine target"),)
     _resource_name = ServiceArn.STEP_FUNCTIONS
 

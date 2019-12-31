@@ -11,7 +11,9 @@ def find_tests():
     for testfile in test_src.iterdir():
         if testfile.suffix == ".py" and testfile.stem != "__init__":
             module_name = testfile.stem
-            module = import_module(f"..src.{module_name}", __spec__.name.rsplit(".", 1)[0])
+            module = import_module(
+                f"..src.{module_name}", __spec__.name.rsplit(".", 1)[0]
+            )
             yield pytest.param(module, id=module_name)
 
 

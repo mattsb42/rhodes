@@ -1,8 +1,22 @@
 from typing import Any, Optional
 
-from rhodes._types import CATCH, COMMENT, END, HEARTBEAT_SECONDS, NEXT, PATH_INPUT, RETRY, TIMEOUT_SECONDS, TITLE
+from rhodes._types import (
+    CATCH,
+    COMMENT,
+    END,
+    HEARTBEAT_SECONDS,
+    INPUT_PATH,
+    NEXT,
+    OUTPUT_PATH,
+    PATH_INPUT,
+    RESULT_PATH,
+    RETRY,
+    TIMEOUT_SECONDS,
+    TITLE,
+    StateMirror,
+)
 from rhodes.identifiers import IntegrationPattern
-from rhodes.states.services import ServiceIntegration
+from rhodes.states import State
 from rhodes.structures import JsonPath
 
 class AmazonDynamoDb:
@@ -13,7 +27,7 @@ class AmazonDynamoDb:
     def delete_item(self, **kwargs) -> AmazonDynamoDbDeleteItem: ...
     def update_item(self, **kwargs) -> AmazonDynamoDbUpdateItem: ...
 
-class AmazonDynamoDbGetItem(ServiceIntegration):
+class AmazonDynamoDbGetItem(State):
     def __init__(
         self,
         title: TITLE,
@@ -37,6 +51,17 @@ class AmazonDynamoDbGetItem(ServiceIntegration):
         ReturnConsumedCapacity: Optional[Any] = None,
         Pattern: IntegrationPattern = IntegrationPattern.REQUEST_RESPONSE,
     ): ...
+    Next: NEXT
+    End: END
+    InputPath: INPUT_PATH
+    OutputPath: OUTPUT_PATH
+    ResultPath: RESULT_PATH
+    Catch: CATCH
+    Retry: RETRY
+    TimeoutSeconds: TIMEOUT_SECONDS
+    HeartbeatSeconds: HEARTBEAT_SECONDS
+    def then(self, next_state: StateMirror) -> StateMirror: ...
+    def end(self) -> State: ...
     TableName: Optional[Any]
     Key: Optional[Any]
     AttributesToGet: Optional[Any]
@@ -46,7 +71,7 @@ class AmazonDynamoDbGetItem(ServiceIntegration):
     ReturnConsumedCapacity: Optional[Any]
     Pattern: IntegrationPattern
 
-class AmazonDynamoDbPutItem(ServiceIntegration):
+class AmazonDynamoDbPutItem(State):
     def __init__(
         self,
         title: TITLE,
@@ -73,6 +98,17 @@ class AmazonDynamoDbPutItem(ServiceIntegration):
         ReturnValues: Optional[Any] = None,
         Pattern: IntegrationPattern = IntegrationPattern.REQUEST_RESPONSE,
     ): ...
+    Next: NEXT
+    End: END
+    InputPath: INPUT_PATH
+    OutputPath: OUTPUT_PATH
+    ResultPath: RESULT_PATH
+    Catch: CATCH
+    Retry: RETRY
+    TimeoutSeconds: TIMEOUT_SECONDS
+    HeartbeatSeconds: HEARTBEAT_SECONDS
+    def then(self, next_state: StateMirror) -> StateMirror: ...
+    def end(self) -> State: ...
     TableName: Optional[Any]
     Item: Optional[Any]
     ConditionalOperator: Optional[Any]
@@ -85,7 +121,7 @@ class AmazonDynamoDbPutItem(ServiceIntegration):
     ReturnValues: Optional[Any]
     Pattern: IntegrationPattern
 
-class AmazonDynamoDbDeleteItem(ServiceIntegration):
+class AmazonDynamoDbDeleteItem(State):
     def __init__(
         self,
         title: TITLE,
@@ -112,6 +148,17 @@ class AmazonDynamoDbDeleteItem(ServiceIntegration):
         ReturnValues: Optional[Any] = None,
         Pattern: IntegrationPattern = IntegrationPattern.REQUEST_RESPONSE,
     ): ...
+    Next: NEXT
+    End: END
+    InputPath: INPUT_PATH
+    OutputPath: OUTPUT_PATH
+    ResultPath: RESULT_PATH
+    Catch: CATCH
+    Retry: RETRY
+    TimeoutSeconds: TIMEOUT_SECONDS
+    HeartbeatSeconds: HEARTBEAT_SECONDS
+    def then(self, next_state: StateMirror) -> StateMirror: ...
+    def end(self) -> State: ...
     TableName: Optional[Any]
     Key: Optional[Any]
     ConditionalOperator: Optional[Any]
@@ -124,7 +171,7 @@ class AmazonDynamoDbDeleteItem(ServiceIntegration):
     ReturnValues: Optional[Any]
     Pattern: IntegrationPattern
 
-class AmazonDynamoDbUpdateItem(ServiceIntegration):
+class AmazonDynamoDbUpdateItem(State):
     def __init__(
         self,
         title: TITLE,
@@ -153,6 +200,17 @@ class AmazonDynamoDbUpdateItem(ServiceIntegration):
         UpdateExpression: Optional[Any] = None,
         Pattern: IntegrationPattern = IntegrationPattern.REQUEST_RESPONSE,
     ): ...
+    Next: NEXT
+    End: END
+    InputPath: INPUT_PATH
+    OutputPath: OUTPUT_PATH
+    ResultPath: RESULT_PATH
+    Catch: CATCH
+    Retry: RETRY
+    TimeoutSeconds: TIMEOUT_SECONDS
+    HeartbeatSeconds: HEARTBEAT_SECONDS
+    def then(self, next_state: StateMirror) -> StateMirror: ...
+    def end(self) -> State: ...
     TableName: Optional[Any]
     Key: Optional[Any]
     ConditionalOperator: Optional[Any]

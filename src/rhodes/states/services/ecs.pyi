@@ -1,11 +1,25 @@
 from typing import Any, Optional
 
-from rhodes._types import CATCH, COMMENT, END, HEARTBEAT_SECONDS, NEXT, PATH_INPUT, RETRY, TIMEOUT_SECONDS, TITLE
+from rhodes._types import (
+    CATCH,
+    COMMENT,
+    END,
+    HEARTBEAT_SECONDS,
+    INPUT_PATH,
+    NEXT,
+    OUTPUT_PATH,
+    PATH_INPUT,
+    RESULT_PATH,
+    RETRY,
+    TIMEOUT_SECONDS,
+    TITLE,
+    StateMirror,
+)
 from rhodes.identifiers import IntegrationPattern
-from rhodes.states.services import ServiceIntegration
-from rhodes.structures import JsonPath, Parameters
+from rhodes.states import State
+from rhodes.structures import JsonPath
 
-class AmazonEcs(ServiceIntegration):
+class AmazonEcs(State):
     def __init__(
         self,
         title: TITLE,
@@ -31,6 +45,17 @@ class AmazonEcs(ServiceIntegration):
         TaskDefinition: Optional[Any] = None,
         Pattern: IntegrationPattern = IntegrationPattern.REQUEST_RESPONSE,
     ): ...
+    Next: NEXT
+    End: END
+    InputPath: INPUT_PATH
+    OutputPath: OUTPUT_PATH
+    ResultPath: RESULT_PATH
+    Catch: CATCH
+    Retry: RETRY
+    TimeoutSeconds: TIMEOUT_SECONDS
+    HeartbeatSeconds: HEARTBEAT_SECONDS
+    def then(self, next_state: StateMirror) -> StateMirror: ...
+    def end(self) -> State: ...
     Pattern: IntegrationPattern
     Cluster: Optional[Any]
     Group: Optional[Any]

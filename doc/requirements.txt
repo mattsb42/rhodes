@@ -2,3 +2,5 @@ sphinx>=1.3.0
 sphinx_rtd_theme
 sphinx-autodoc-typehints
 sphinxcontrib-spelling
+sphinx-tabs>=1.1.13
+sphinxcontrib-plantuml>=0.17.1

@@ -1,15 +1,29 @@
 from typing import Any, Optional
 
-from rhodes._types import CATCH, COMMENT, END, HEARTBEAT_SECONDS, NEXT, PATH_INPUT, RETRY, TIMEOUT_SECONDS, TITLE
+from rhodes._types import (
+    CATCH,
+    COMMENT,
+    END,
+    HEARTBEAT_SECONDS,
+    INPUT_PATH,
+    NEXT,
+    OUTPUT_PATH,
+    PATH_INPUT,
+    RESULT_PATH,
+    RETRY,
+    TIMEOUT_SECONDS,
+    TITLE,
+    StateMirror,
+)
 from rhodes.identifiers import IntegrationPattern
-from rhodes.states.services import ServiceIntegration
+from rhodes.states import State
 from rhodes.structures import JsonPath, Parameters
 
 ENDPOINT_CONFIG_NAME = Optional[Any]
 ENDPOINT_NAME = Optional[Any]
 TAGS = Optional[Any]
 
-class AmazonSageMakerCreateEndpoint(ServiceIntegration):
+class AmazonSageMakerCreateEndpoint(State):
     def __init__(
         self,
         title: TITLE,
@@ -29,12 +43,23 @@ class AmazonSageMakerCreateEndpoint(ServiceIntegration):
         Tags: TAGS = None,
         Pattern: IntegrationPattern = IntegrationPattern.REQUEST_RESPONSE,
     ): ...
+    Next: NEXT
+    End: END
+    InputPath: INPUT_PATH
+    OutputPath: OUTPUT_PATH
+    ResultPath: RESULT_PATH
+    Catch: CATCH
+    Retry: RETRY
+    TimeoutSeconds: TIMEOUT_SECONDS
+    HeartbeatSeconds: HEARTBEAT_SECONDS
+    def then(self, next_state: StateMirror) -> StateMirror: ...
+    def end(self) -> State: ...
     EndpointConfigName: ENDPOINT_CONFIG_NAME
     EndpointName: ENDPOINT_NAME
     Tags: TAGS
     Pattern: IntegrationPattern
 
-class AmazonSageMakerCreateEndpointConfig(ServiceIntegration):
+class AmazonSageMakerCreateEndpointConfig(State):
     def __init__(
         self,
         title: TITLE,
@@ -55,13 +80,24 @@ class AmazonSageMakerCreateEndpointConfig(ServiceIntegration):
         ProductionVariants: Optional[Any] = None,
         Pattern: IntegrationPattern = IntegrationPattern.REQUEST_RESPONSE,
     ): ...
+    Next: NEXT
+    End: END
+    InputPath: INPUT_PATH
+    OutputPath: OUTPUT_PATH
+    ResultPath: RESULT_PATH
+    Catch: CATCH
+    Retry: RETRY
+    TimeoutSeconds: TIMEOUT_SECONDS
+    HeartbeatSeconds: HEARTBEAT_SECONDS
+    def then(self, next_state: StateMirror) -> StateMirror: ...
+    def end(self) -> State: ...
     EndpointConfigName: ENDPOINT_CONFIG_NAME
     Tags: TAGS
     KmsKeyId: Optional[Any]
     ProductionVariants: Optional[Any]
     Pattern: IntegrationPattern
 
-class AmazonSageMakerCreateHyperParameterTuningJob(ServiceIntegration):
+class AmazonSageMakerCreateHyperParameterTuningJob(State):
     def __init__(
         self,
         title: TITLE,
@@ -83,6 +119,17 @@ class AmazonSageMakerCreateHyperParameterTuningJob(ServiceIntegration):
         WarmStartConfig: Optional[Any] = None,
         Pattern: IntegrationPattern = IntegrationPattern.REQUEST_RESPONSE,
     ): ...
+    Next: NEXT
+    End: END
+    InputPath: INPUT_PATH
+    OutputPath: OUTPUT_PATH
+    ResultPath: RESULT_PATH
+    Catch: CATCH
+    Retry: RETRY
+    TimeoutSeconds: TIMEOUT_SECONDS
+    HeartbeatSeconds: HEARTBEAT_SECONDS
+    def then(self, next_state: StateMirror) -> StateMirror: ...
+    def end(self) -> State: ...
     Tags: TAGS
     HyperParameterTuningJobConfig: Optional[Any]
     HyperParameterTuningJobName: Optional[Any]
@@ -90,7 +137,7 @@ class AmazonSageMakerCreateHyperParameterTuningJob(ServiceIntegration):
     WarmStartConfig: Optional[Any]
     Pattern: IntegrationPattern
 
-class AmazonSageMakerCreateLabelingJob(ServiceIntegration):
+class AmazonSageMakerCreateLabelingJob(State):
     def __init__(
         self,
         title: TITLE,
@@ -117,6 +164,17 @@ class AmazonSageMakerCreateLabelingJob(ServiceIntegration):
         RoleArn: Optional[Any] = None,
         StoppingConditions: Optional[Any] = None,
     ): ...
+    Next: NEXT
+    End: END
+    InputPath: INPUT_PATH
+    OutputPath: OUTPUT_PATH
+    ResultPath: RESULT_PATH
+    Catch: CATCH
+    Retry: RETRY
+    TimeoutSeconds: TIMEOUT_SECONDS
+    HeartbeatSeconds: HEARTBEAT_SECONDS
+    def then(self, next_state: StateMirror) -> StateMirror: ...
+    def end(self) -> State: ...
     Tags: TAGS
     Pattern: IntegrationPattern
     HumanTaskConfig: Optional[Any]
@@ -129,7 +187,7 @@ class AmazonSageMakerCreateLabelingJob(ServiceIntegration):
     RoleArn: Optional[Any]
     StoppingConditions: Optional[Any]
 
-class AmazonSageMakerCreateModel(ServiceIntegration):
+class AmazonSageMakerCreateModel(State):
     def __init__(
         self,
         title: TITLE,
@@ -153,6 +211,17 @@ class AmazonSageMakerCreateModel(ServiceIntegration):
         PrimaryContainer: Optional[Any] = None,
         VpcConfig: Optional[Any] = None,
     ): ...
+    Next: NEXT
+    End: END
+    InputPath: INPUT_PATH
+    OutputPath: OUTPUT_PATH
+    ResultPath: RESULT_PATH
+    Catch: CATCH
+    Retry: RETRY
+    TimeoutSeconds: TIMEOUT_SECONDS
+    HeartbeatSeconds: HEARTBEAT_SECONDS
+    def then(self, next_state: StateMirror) -> StateMirror: ...
+    def end(self) -> State: ...
     Tags: TAGS
     Pattern: IntegrationPattern
     Containers: Optional[Any]
@@ -162,7 +231,7 @@ class AmazonSageMakerCreateModel(ServiceIntegration):
     PrimaryContainer: Optional[Any]
     VpcConfig: Optional[Any]
 
-class AmazonSageMakerCreateTrainingJob(ServiceIntegration):
+class AmazonSageMakerCreateTrainingJob(State):
     def __init__(
         self,
         title: TITLE,
@@ -189,6 +258,17 @@ class AmazonSageMakerCreateTrainingJob(ServiceIntegration):
         TrainingJobName: Optional[Any] = None,
         VpcConfig: Optional[Any] = None,
     ): ...
+    Next: NEXT
+    End: END
+    InputPath: INPUT_PATH
+    OutputPath: OUTPUT_PATH
+    ResultPath: RESULT_PATH
+    Catch: CATCH
+    Retry: RETRY
+    TimeoutSeconds: TIMEOUT_SECONDS
+    HeartbeatSeconds: HEARTBEAT_SECONDS
+    def then(self, next_state: StateMirror) -> StateMirror: ...
+    def end(self) -> State: ...
     Tags: TAGS
     Pattern: IntegrationPattern
     AlgorithmSpecification: Optional[Any]
@@ -201,7 +281,7 @@ class AmazonSageMakerCreateTrainingJob(ServiceIntegration):
     TrainingJobName: Optional[Any]
     VpcConfig: Optional[Any]
 
-class AmazonSageMakerCreateTransformJob(ServiceIntegration):
+class AmazonSageMakerCreateTransformJob(State):
     def __init__(
         self,
         title: TITLE,
@@ -228,6 +308,17 @@ class AmazonSageMakerCreateTransformJob(ServiceIntegration):
         TransformOutput: Optional[Any] = None,
         TransformResources: Optional[Any] = None,
     ): ...
+    Next: NEXT
+    End: END
+    InputPath: INPUT_PATH
+    OutputPath: OUTPUT_PATH
+    ResultPath: RESULT_PATH
+    Catch: CATCH
+    Retry: RETRY
+    TimeoutSeconds: TIMEOUT_SECONDS
+    HeartbeatSeconds: HEARTBEAT_SECONDS
+    def then(self, next_state: StateMirror) -> StateMirror: ...
+    def end(self) -> State: ...
     Tags: TAGS
     Pattern: IntegrationPattern
     BatchStrategy: Optional[Any]
@@ -240,7 +331,7 @@ class AmazonSageMakerCreateTransformJob(ServiceIntegration):
     TransformOutput: Optional[Any]
     TransformResources: Optional[Any]
 
-class AmazonSageMakerUpdateEndpoint(ServiceIntegration):
+class AmazonSageMakerUpdateEndpoint(State):
     def __init__(
         self,
         title: TITLE,
@@ -260,6 +351,17 @@ class AmazonSageMakerUpdateEndpoint(ServiceIntegration):
         Tags: TAGS = None,
         Pattern: IntegrationPattern = IntegrationPattern.REQUEST_RESPONSE,
     ): ...
+    Next: NEXT
+    End: END
+    InputPath: INPUT_PATH
+    OutputPath: OUTPUT_PATH
+    ResultPath: RESULT_PATH
+    Catch: CATCH
+    Retry: RETRY
+    TimeoutSeconds: TIMEOUT_SECONDS
+    HeartbeatSeconds: HEARTBEAT_SECONDS
+    def then(self, next_state: StateMirror) -> StateMirror: ...
+    def end(self) -> State: ...
     EndpointConfigName: ENDPOINT_CONFIG_NAME
     EndpointName: ENDPOINT_NAME
     Tags: TAGS

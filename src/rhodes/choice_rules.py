@@ -1,12 +1,12 @@
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Any, Type, overload
+from typing import Any, Type
 
 import attr
-from attr.validators import deep_iterable, instance_of, optional
+from attr.validators import instance_of, optional
 
-from rhodes._util import RHODES_ATTRIB
+from rhodes._util import RHODES_ATTRIB, docstring_with_param
 from rhodes.exceptions import InvalidDefinitionError
 from rhodes.structures import JsonPath
 
@@ -38,28 +38,28 @@ __all__ = (
 
 
 class VariablePath(JsonPath):
-    """JsonPath with overloading helper methods."""
+    """:class:`JsonPath` variant with overloading helper methods to generate choice rules."""
 
     # TODO: Add __and__ and __or__ behaviors?
 
     def __lt__(self, other: Any) -> Type["ChoiceRule"]:
-        return derive_rule(variable=self, operator="<", value=other)
+        return _derive_rule(variable=self, operator="<", value=other)
 
     def __le__(self, other: Any) -> Type["ChoiceRule"]:
-        return derive_rule(variable=self, operator="<=", value=other)
+        return _derive_rule(variable=self, operator="<=", value=other)
 
     def __eq__(self, other: Any) -> Type["ChoiceRule"]:
-        return derive_rule(variable=self, operator="==", value=other)
+        return _derive_rule(variable=self, operator="==", value=other)
 
     def __ne__(self, other: Any) -> "Not":
-        inner_rule = derive_rule(variable=self, operator="==", value=other)
+        inner_rule = _derive_rule(variable=self, operator="==", value=other)
         return Not(Rule=inner_rule)
 
     def __gt__(self, other: Any) -> Type["ChoiceRule"]:
-        return derive_rule(variable=self, operator=">", value=other)
+        return _derive_rule(variable=self, operator=">", value=other)
 
     def __ge__(self, other: Any) -> Type["ChoiceRule"]:
-        return derive_rule(variable=self, operator=">=", value=other)
+        return _derive_rule(variable=self, operator=">=", value=other)
 
 
 def _required_next(instance):
@@ -97,7 +97,15 @@ def _convert_to_variable_path(value) -> VariablePath:
 
 def _single(cls):
     cls.Variable = RHODES_ATTRIB(validator=instance_of(VariablePath), converter=_convert_to_variable_path)
+    cls.__doc__ = docstring_with_param(
+        cls, "Variable", VariablePath, description="Path to value in state input that will be evaluated"
+    )
+
     cls.Next = RHODES_ATTRIB(validator=optional(instance_of(str)))
+    cls.__doc__ = docstring_with_param(
+        cls, "Next", description="The state to which to continue if this rule evaluates as true"
+    )
+
     cls.to_dict = _single_to_dict
 
     return cls
@@ -124,20 +132,32 @@ def _validate_multi_subrules(instance, attribute, value):
 
 def _multi(cls):
     cls.Rules = RHODES_ATTRIB(validator=_validate_multi_subrules)
+    cls.__doc__ = docstring_with_param(
+        cls, "Rules", description="One or more :class:`ChoiceRule` to evaluate for this rule"
+    )
+
     cls.Next = RHODES_ATTRIB(validator=optional(instance_of(str)))
+    cls.__doc__ = docstring_with_param(
+        cls, "Next", description="The state to which to continue if this rule evaluates as true"
+    )
+
     cls.to_dict = _multi_to_dict
 
     return cls
 
 
 def _string(cls):
-    cls.Value = RHODES_ATTRIB(validator=instance_of(str))
     cls = _single(cls)
+
+    cls.Value = RHODES_ATTRIB(validator=instance_of(str))
+    cls.__doc__ = docstring_with_param(cls, "Value", str, description="The value to which to compare ``Variable``")
 
     return cls
 
 
 def _number(cls):
+    cls = _single(cls)
+
     def _numeric_converter(value) -> Decimal:
         if isinstance(value, Decimal):
             return value
@@ -155,20 +175,25 @@ def _number(cls):
     #  integers outside of the range [-(253)+1, (253)-1]
     #  might fail to compare in the expected way.
     cls.Value = RHODES_ATTRIB(validator=instance_of(Decimal), converter=_numeric_converter)
+    cls.__doc__ = docstring_with_param(cls, "Value", description="The value to which to compare ``Variable``")
+
     cls._serialized_value = _value_serializer
-    cls = _single(cls)
 
     return cls
 
 
 def _bool(cls):
-    cls.Value = RHODES_ATTRIB(validator=instance_of(bool))
     cls = _single(cls)
+
+    cls.Value = RHODES_ATTRIB(validator=instance_of(bool))
+    cls.__doc__ = docstring_with_param(cls, "Value", bool, description="The value to which to compare ``Variable``")
 
     return cls
 
 
 def _timestamp(cls):
+    cls = _single(cls)
+
     def _datetime_validator(instance, attribute, value):
         if value.tzinfo is None:
             raise ValueError(f"'{attribute.name}' must have a 'tzinfo' value set.")
@@ -177,18 +202,18 @@ def _timestamp(cls):
         return instance.Value.isoformat()
 
     cls.Value = RHODES_ATTRIB(validator=[instance_of(datetime), _datetime_validator])
+    cls.__doc__ = docstring_with_param(cls, "Value", datetime, description="The value to which to compare ``Variable``")
+
     cls._serialized_value = _value_serializer
-    cls = _single(cls)
 
     return cls
 
 
 @attr.s(eq=False)
 class ChoiceRule:
+    """"""
 
     member_of = None
-    Value = NotImplemented
-    Next = NotImplemented
 
     def to_dict(self):
         raise NotImplementedError()
@@ -225,113 +250,118 @@ class ChoiceRule:
 @attr.s(eq=False)
 @_string
 class StringEquals(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_string
 class StringLessThan(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_string
 class StringGreaterThan(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_string
 class StringLessThanEquals(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_string
 class StringGreaterThanEquals(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_number
 class NumericEquals(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_number
 class NumericLessThan(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_number
 class NumericGreaterThan(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_number
 class NumericLessThanEquals(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_number
 class NumericGreaterThanEquals(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_bool
 class BooleanEquals(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_timestamp
 class TimestampEquals(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_timestamp
 class TimestampLessThan(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_timestamp
 class TimestampGreaterThan(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_timestamp
 class TimestampLessThanEquals(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_timestamp
 class TimestampGreaterThanEquals(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_multi
 class And(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 @_multi
 class Or(ChoiceRule):
-    pass
+    """"""
 
 
 @attr.s(eq=False)
 class Not(ChoiceRule):
+    """
+    :param ChoiceRule Rule: Rule that must evaluate as false
+    :param Next: The state to which to continue if this rule evaluates as true
+    """
+
     Rule = RHODES_ATTRIB(validator=instance_of(ChoiceRule))
     Next = RHODES_ATTRIB(validator=optional(instance_of(str)))
 
@@ -380,7 +410,13 @@ _OPERATORS = {
 _TYPE_MAP = {bool: "boolean", int: "number", float: "number", Decimal: "number", str: "string", datetime: "time"}
 
 
-def derive_rule(*, variable: VariablePath, operator: str, value) -> Type[ChoiceRule]:
+def _derive_rule(*, variable: VariablePath, operator: str, value) -> Type[ChoiceRule]:
+    """Derive the correct :class:`ChoiceRule` based on the specified operator and value.
+
+    :param variable: Path to variable in state data
+    :param operator: Desired equality operator string
+    :param value: Value to compare against
+    """
     if isinstance(value, Enum):
         value = value.value
 
@@ -398,8 +434,10 @@ def derive_rule(*, variable: VariablePath, operator: str, value) -> Type[ChoiceR
 
 
 def all_(*rules: ChoiceRule) -> And:
+    """Helper to assemble several rules into an :class:`And` rule."""
     return And(Rules=list(rules))
 
 
 def any_(*rules: ChoiceRule) -> Or:
+    """Helper to assemble several rules into an :class:`Or` rule."""
     return Or(Rules=list(rules))

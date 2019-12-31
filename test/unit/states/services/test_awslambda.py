@@ -2,8 +2,8 @@
 import pytest
 
 from rhodes.states import Task
+from rhodes.states.services._util import IntegrationPattern
 from rhodes.states.services.awslambda import AwsLambda
-from rhodes.states.services.util import IntegrationPattern
 from rhodes.structures import Parameters
 
 pytestmark = [pytest.mark.local, pytest.mark.functional]
@@ -14,9 +14,7 @@ def test_aws_lambda_request_response():
         "TestTask",
         Resource="arn:aws:states:::lambda:invoke",
         Parameters=Parameters(
-            FunctionName="arn:aws:lambda:us-east-1:123456789012:function:ship-val",
-            Payload=Parameters(test="value"),
-            InvocationType="RequestResponse",
+            FunctionName="arn:aws:lambda:us-east-1:123456789012:function:ship-val", Payload=Parameters(test="value")
         ),
     )
     expected = expected_task.to_dict()
@@ -36,9 +34,7 @@ def test_aws_lambda_callback():
         "TestTask",
         Resource="arn:aws:states:::lambda:invoke.waitForTaskToken",
         Parameters=Parameters(
-            FunctionName="arn:aws:lambda:us-east-1:123456789012:function:ship-val",
-            Payload=Parameters(test="value"),
-            InvocationType="RequestResponse",
+            FunctionName="arn:aws:lambda:us-east-1:123456789012:function:ship-val", Payload=Parameters(test="value")
         ),
     )
     expected = expected_task.to_dict()

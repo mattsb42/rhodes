@@ -2,8 +2,8 @@
 import pytest
 
 from rhodes.states import Task
+from rhodes.states.services._util import IntegrationPattern
 from rhodes.states.services.sns import AmazonSns
-from rhodes.states.services.util import IntegrationPattern
 from rhodes.structures import JsonPath, Parameters
 
 pytestmark = [pytest.mark.local, pytest.mark.functional]

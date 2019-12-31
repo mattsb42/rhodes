@@ -3,8 +3,8 @@ import pytest
 
 from rhodes import StateMachine, choice_rules
 from rhodes.choice_rules import VariablePath, all_
-from rhodes.states import Choice, Fail, Parallel, Parameters, Succeed, Task, Wait
-from rhodes.structures import JsonPath
+from rhodes.states import Choice, Fail, Parallel, Succeed, Task, Wait
+from rhodes.structures import JsonPath, Parameters
 
 from ..unit_test_helpers import compare_state_machine
 

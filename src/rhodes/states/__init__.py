@@ -15,28 +15,16 @@ from rhodes._util import RHODES_ATTRIB, RequiredValue, require_field
 from rhodes._validators import is_valid_timestamp
 from rhodes.choice_rules import ChoiceRule
 from rhodes.exceptions import InvalidDefinitionError
-from rhodes.structures import JsonPath, Parameters
+from rhodes.structures import JsonPath
 
-from ._parameters import _catch_retry, _input_output, _next_and_end, _parameters, _result_path, task_type
+from ._parameters import _catch_retry, _input_output, _next_and_end, _parameters, _result_path, state, task_type
 
-__all__ = (
-    "State",
-    "StateMachine",
-    "Pass",
-    "Parameters",
-    "Parallel",
-    "Map",
-    "Choice",
-    "Task",
-    "Wait",
-    "Fail",
-    "Succeed",
-)
+__all__ = ("State", "StateMachine", "Pass", "Parallel", "Map", "Choice", "Task", "Wait", "Fail", "Succeed")
 
 
 @attr.s(eq=False)
 class State:
-    """"""
+    """Base class for states."""
 
     title: str = attr.ib(validator=instance_of(str))
 
@@ -75,6 +63,7 @@ class State:
         return not self.__eq__(other)
 
     def to_dict(self) -> Dict:
+        """Serialize state as a dictionary."""
         for required in self._required_fields:
             require_field(instance=self, required_value=required)
 
@@ -94,6 +83,13 @@ class State:
         return self_dict
 
     def promote(self, path: Union[str, Enum, jsonpath_rw.JSONPath, JsonPath]) -> "Pass":
+        """Add a :class:`Pass` state after this state that promotes a path in the input to this state's ``ResultPath``.
+
+        Path *must* start with a path relative this state's ``ResultPath``
+        as indicated by a ``@.`` prefix.
+
+        :param path: Path to promote
+        """
         # TODO: move this to the resultpath decorator?
         if not hasattr(self, "ResultPath"):
             raise AttributeError(f"{self.__class__.__name__} does not support 'promote'")
@@ -112,7 +108,15 @@ class State:
 
 @attr.s
 class StateMachine:
-    """"""
+    """Step Functions State Machine.
+
+    :param States: Map of states that make up this state machine
+    :type States: dict(str, State)
+    :param str StartAt: The state where this state machine starts
+    :param str Comment: Human-readable description of the state
+    :param str Version: The version of the Amazon States Language used in this state machine (must be ``1.0`` if provided)
+    :param int TimeoutSeconds: Maximum time that this state machine is allowed to run
+    """
 
     _required_fields = [
         RequiredValue("States", "State machine contains no states."),
@@ -143,6 +147,7 @@ class StateMachine:
             attr.validate(self)
 
     def to_dict(self) -> Dict:
+        """Serialize this state machine as a dictionary."""
         for required in self._required_fields:
             require_field(instance=self, required_value=required)
 
@@ -160,11 +165,16 @@ class StateMachine:
         return self_dict
 
     def definition_string(self) -> Sub:
+        """Serialize this state machine for use in a ``troposphere`` state machine definition."""
         data = self.to_dict()
         initial_value = json.dumps(data)
         return Sub(initial_value)
 
     def add_state(self, new_state: State) -> State:
+        """Add a state to this state machine.
+
+        :param State new_state: State to add
+        """
         if new_state.title in self.States:
             if self.States[new_state.title] == new_state:
                 return new_state
@@ -177,6 +187,10 @@ class StateMachine:
         return new_state
 
     def start_with(self, first_state: State) -> State:
+        """Add a state to this state machine and mark it as the starting state.
+
+        :param State first_state: State to start with
+        """
         self.add_state(new_state=first_state)
 
         # TODO: use references rather than extracting names
@@ -190,7 +204,10 @@ class StateMachine:
 @_result_path
 @_input_output
 @_next_and_end
+@state
 class Pass(State):
+    """"""
+
     Result = RHODES_ATTRIB()
 
 
@@ -198,6 +215,8 @@ class Pass(State):
 @_parameters
 @task_type
 class Task(State):
+    """"""
+
     _required_fields = [RequiredValue("Resource", "Task resource is not set.")]
 
     # TODO: Additional validation for strings?
@@ -206,7 +225,10 @@ class Task(State):
 
 @attr.s(eq=False)
 @_input_output
+@state
 class Choice(State):
+    """"""
+
     # TODO: Validate that Next and Default states are in parent
     # TODO: Choice does not allow
     Choices: List[ChoiceRule] = RHODES_ATTRIB(
@@ -254,7 +276,10 @@ class Choice(State):
 @attr.s(eq=False)
 @_input_output
 @_next_and_end
+@state
 class Wait(State):
+    """"""
+
     # TODO: Required only one of these on serialization
 
     Seconds: Optional[int] = RHODES_ATTRIB(validator=optional(instance_of(int)))
@@ -308,11 +333,13 @@ class Wait(State):
 
 
 @attr.s(eq=False)
+@state
 class Succeed(State):
     """"""
 
 
 @attr.s(eq=False)
+@state
 class Fail(State):
     """"""
 
@@ -326,7 +353,10 @@ class Fail(State):
 @_result_path
 @_input_output
 @_next_and_end
+@state
 class Parallel(State):
+    """"""
+
     # TODO: Each branch MUST be a self-contained state machine.
     Branches: List[StateMachine] = RHODES_ATTRIB(default=attr.Factory(list))
 
@@ -352,7 +382,10 @@ class Parallel(State):
 @_result_path
 @_input_output
 @_next_and_end
+@state
 class Map(State):
+    """"""
+
     _required_fields = [
         RequiredValue("Iterator", "Map iterator must be set."),
         RequiredValue("ItemsPath", "Map items path must be set."),

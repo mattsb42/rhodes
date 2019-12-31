@@ -1,4 +1,4 @@
-from typing import Dict, Iterable, List, Optional, Any
+from typing import Any, Dict, Iterable, List, Optional
 
 import attr
 from troposphere import Sub
