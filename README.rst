@@ -18,9 +18,9 @@ Rhodes
    :target: https://rhodes.readthedocs.io/
    :alt: Documentation Status
 
-.. image:: https://travis-ci.org/mattsb42/rhodes.svg?branch=master
-   :target: https://travis-ci.org/mattsb42/rhodes
-   :alt: Travis CI Test Status
+.. image:: https://github.com/mattsb42/rhodes/workflows/Continuous%20Integration%20testing%20for%20Pull%20Requests/badge.svg
+   :target: https://github.com/mattsb42/rhodes/actions?query=workflow%3A%22Continuous+Integration+testing+for+Pull+Requests%22
+   :alt: Pull Request CI Build Status
 
 
 Rhodes is a library designed to make creating `AWS Step Functions`_ state machines
