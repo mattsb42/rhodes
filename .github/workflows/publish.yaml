@@ -1,0 +1,43 @@
+name: Publish to PyPI
+
+on:
+    release:
+        types: [published]
+
+jobs:
+    test-release:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-python@v1
+              with:
+                  python-version: 3.x
+            - uses: aws-actions/configure-aws-credentials@v1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: us-west-2
+                  mask-aws-account-id: true
+            - name: publish to test-PyPI
+              env:
+                  TOXENV: test-release
+                  TEST_PYPI_SECRET_ARN: test-pypi-Evu7ev
+              run: tox -- -vv
+    release:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - uses: actions/setup-python@v1
+              with:
+                  python-version: 3.x
+            - uses: aws-actions/configure-aws-credentials@v1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: us-west-2
+                  mask-aws-account-id: true
+            - name: publish to test-PyPI
+              env:
+                  TOXENV: release
+                  PYPI_SECRET_ARN: secret:pypi-rhodes-LCCzlC
+              run: tox -- -vv
