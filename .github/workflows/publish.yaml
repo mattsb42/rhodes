@@ -18,7 +18,7 @@ jobs:
             - name: publish to test-PyPI
               env:
                   TOXENV: test-release
-                  TEST_PYPI_SECRET_ARN: test-pypi-Evu7ev
+                  TEST_PYPI_SECRET_ARN: test-pypi
                   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
                   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   AWS_DEFAULT_REGION: us-west-2
@@ -37,7 +37,7 @@ jobs:
             - name: publish to test-PyPI
               env:
                   TOXENV: release
-                  PYPI_SECRET_ARN: secret:pypi-rhodes-LCCzlC
+                  PYPI_SECRET_ARN: pypi-rhodes
                   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
                   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   AWS_DEFAULT_REGION: us-west-2
