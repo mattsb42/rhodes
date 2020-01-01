@@ -18,10 +18,8 @@ jobs:
             - name: publish to test-PyPI
               env:
                   TOXENV: test-release
+                  TWINE_PASSWORD: ${{ secrets.TEST_PYPI }}
                   TEST_PYPI_SECRET_ARN: test-pypi
-                  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                  AWS_DEFAULT_REGION: us-west-2
               run: tox -- -vv
     release:
         needs: test-release
@@ -37,8 +35,6 @@ jobs:
             - name: publish to test-PyPI
               env:
                   TOXENV: release
+                  TWINE_PASSWORD: ${{ secrets.PYPI }}
                   PYPI_SECRET_ARN: pypi-rhodes
-                  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                  AWS_DEFAULT_REGION: us-west-2
               run: tox -- -vv
