@@ -24,6 +24,7 @@ jobs:
                   TEST_PYPI_SECRET_ARN: test-pypi-Evu7ev
               run: tox -- -vv
     release:
+        needs: test-release
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
