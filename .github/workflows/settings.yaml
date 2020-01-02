@@ -15,6 +15,6 @@ jobs:
               with:
                   python-version: 2.x
             - name: apply settings
-              uses: elstudio/actions-settings@v2
+              uses: mattsb42/actions-settings@testing
               env:
-                  GITHUB_TOKEN: ${{ secrets.DANGER_TOKEN }}
+                  GITHUB_TOKEN: ${{ secrets.SETTING_TOKEN }}
