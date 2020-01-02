@@ -27,9 +27,27 @@ branches:
               strict: true
               # The list of status checks to require in order to merge into this branch.
               contexts:
-                  # TODO: Small list to test; come back and flesh this out again
+                  # Static Analysis
                   - analysis (bandit)
+                  # Linux
+                  - tests (ubuntu-latest, 3.6, x64, local)
+                  - tests (ubuntu-latest, 3.6, x64, examples)
+                  - tests (ubuntu-latest, 3.7, x64, local)
+                  - tests (ubuntu-latest, 3.7, x64, examples)
+                  - tests (ubuntu-latest, 3.8, x64, local)
+                  - tests (ubuntu-latest, 3.8, x64, examples)
+                  - tests (ubuntu-latest, 3.x, x64, local)
+                  - tests (ubuntu-latest, 3.x, x64, examples)
+                  # MacOS
+                  - tests (macos-latest, 3.6, x64, local)
                   - tests (macos-latest, 3.6, x64, examples)
+                  - tests (macos-latest, 3.7, x64, local)
+                  - tests (macos-latest, 3.7, x64, examples)
+                  - tests (macos-latest, 3.8, x64, local)
+                  - tests (macos-latest, 3.8, x64, examples)
+                  - tests (macos-latest, 3.x, x64, local)
+                  - tests (macos-latest, 3.x, x64, examples)
+                  # Windows x86
                   - tests (windows-latest, 3.6, x86, local)
                   - tests (windows-latest, 3.6, x86, examples)
                   - tests (windows-latest, 3.7, x86, local)
@@ -38,6 +56,7 @@ branches:
                   - tests (windows-latest, 3.8, x86, examples)
                   - tests (windows-latest, 3.x, x86, local)
                   - tests (windows-latest, 3.x, x86, examples)
+                  # Windows x64
                   - tests (windows-latest, 3.6, x64, local)
                   - tests (windows-latest, 3.6, x64, examples)
                   - tests (windows-latest, 3.7, x64, local)
