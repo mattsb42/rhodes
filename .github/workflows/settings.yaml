@@ -11,6 +11,6 @@ jobs:
         steps:
             - uses: actions/checkout@v2
             - name: apply settings
-              uses: elstudio/actions-settings@v2
+              uses: elstudio/actions-settings@master
               env:
                   GITHUB_TOKEN: ${{ secrets.SETTINGS_TOKEN }}
