@@ -65,9 +65,3 @@ branches:
                   - tests (windows-latest, 3.8, x64, examples)
                   - tests (windows-latest, 3.x, x64, local)
                   - tests (windows-latest, 3.x, x64, examples)
-    - name: development
-      protection:
-          enforce_admins: true
-          required_pull_request_reviews: null
-          restrictions: null
-          required_status_checks: null
