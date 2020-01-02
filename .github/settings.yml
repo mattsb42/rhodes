@@ -1,0 +1,28 @@
+repository:
+    description: Tools designed to make creating AWS Step Functions state machines simple and less error prone.
+    homepage: https://rhodes.readthedocs.io/
+    has_wiki: false
+
+    default_branch: master
+    allow_squash_merge: true
+    allow_merge_commit: true
+    allow_rebase_merge: false
+
+collaborators:
+    - username: mattsb42-aws
+      permission: admin
+
+branches:
+    - name: master
+      protection:
+          # Enforce all configured restrictions for administrators. Set to true to enforce required status checks for repository administrators. Set to null to disable.
+          enforce_admins: true
+          required_status_checks:
+              # Require branches to be up to date before merging.
+              strict: true
+              # The list of status checks to require in order to merge into this branch.
+              contexts:
+                  # TODO: Small list to test; come back and flesh this out again
+                  - analysis (bandit)
+                  - tests (macos-latest, 3.6, x64, examples)
+                  - tests (windows-latest, 3.8, x86, local)
