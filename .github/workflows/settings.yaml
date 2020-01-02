@@ -11,6 +11,9 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
+            - uses: actions/setup-python@v1
+              with:
+                  python-version: 2.x
             - name: apply settings
               uses: elstudio/actions-settings@v2
               env:
