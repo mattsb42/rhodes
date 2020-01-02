@@ -9,12 +9,14 @@ repository:
     allow_rebase_merge: false
 
 collaborators:
-    - username: mattsb42-aws
-      permission: admin
+    -
+        username: mattsb42-aws
+        permission: admin
 
 labels:
-    - name: docs-update-required
-      color: 62bf11
+    -
+        name: docs-update-required
+        color: 62bf11
 
 branches:
     -

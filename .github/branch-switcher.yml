@@ -1,0 +1,4 @@
+preferredBranch: development
+exclude:
+    # Ignore PRs from development to master
+    - branch: development
