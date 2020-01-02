@@ -14,4 +14,4 @@ jobs:
             - name: apply settings
               uses: elstudio/actions-settings@v2
               env:
-                  GITHUB_TOKEN: ${{ secrets.SETTINGS_TOKEN }}
+                  GITHUB_TOKEN: ${{ secrets.DANGER_TOKEN }}
