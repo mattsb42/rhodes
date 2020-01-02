@@ -1,0 +1,16 @@
+name: Apply repository settings
+
+on:
+    push:
+        branches:
+            - master
+
+jobs:
+    apply-settings:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: apply settings
+              uses: elstudio/actions-settings@v2
+              env:
+                  GITHUB_TOKEN: ${{ secrets.SETTINGS_TOKEN }}
