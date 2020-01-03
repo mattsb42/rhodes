@@ -19,9 +19,3 @@ jobs:
                     PULL_REQUEST_TITLE: Promote development to master
                     PULL_REQUEST_BODY: |
                         Automatic promotion from development to master.
-            -   name: label-pr
-                uses: TimonVS/pr-labeler-action@v3
-                with:
-                    configuration-path: .github/branch-pr-labels.yaml
-                env:
-                    GITHUB_TOKEN: ${{ secrets.PROMOTION_TOKEN }}
