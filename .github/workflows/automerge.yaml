@@ -24,3 +24,11 @@ jobs:
                 uses: pascalgn/automerge-action@v0.6.1
                 env:
                     GITHUB_TOKEN: ${{ secrets.PROMOTION_TOKEN }}
+                    MERGE_LABELS: automerge,!block merge
+                    MERGE_METHOD: squash
+                    MERGE_COMMIT_MESSAGE: automatic
+                    # Don't auto-merge from forks
+                    MERGE_FORKS: false
+                    # Retry every 30s for 2h
+                    MERGE_RETRIES: 240
+                    MERGE_RETRY_SLEEP: 30000
