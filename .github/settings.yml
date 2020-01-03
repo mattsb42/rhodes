@@ -12,6 +12,8 @@ collaborators:
     -   username: mattsb42-aws
         permission: admin
     -   username: mattsb42-bot
+        permission: push
+    -   username: mattsb42-admin-bot
         permission: admin
 
 labels:
