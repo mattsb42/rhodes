@@ -12,7 +12,7 @@ jobs:
         steps:
             -
                 name: promote
-                uses: vsoch/pull-request-action@1.0.1
+                uses: vsoch/pull-request-action@master
                 env:
                     GITHUB_TOKEN: ${{ secrets.PROMOTION_TOKEN }}
                     BRANCH_PREFIX: development
