@@ -28,9 +28,9 @@ jobs:
                     MERGE_LABELS: "!block merge"
                     MERGE_METHOD: squash
                     MERGE_COMMIT_MESSAGE: automatic
-                    # Retry every 30s for 2h
-                    MERGE_RETRIES: 240
-                    MERGE_RETRY_SLEEP: 30000
+                    # Retry every 10s for 30m
+                    MERGE_RETRIES: 180
+                    MERGE_RETRY_SLEEP: 10000
     automerge-to-master:
         if: github.head_ref == 'development' && github.base_ref == 'master'
         runs-on: ubuntu-latest
@@ -44,6 +44,6 @@ jobs:
                     MERGE_COMMIT_MESSAGE: automatic
                     # Don't auto-merge from forks
                     MERGE_FORKS: false
-                    # Retry every 30s for 2h
-                    MERGE_RETRIES: 240
-                    MERGE_RETRY_SLEEP: 30000
+                    # Retry every 10s for 30m
+                    MERGE_RETRIES: 180
+                    MERGE_RETRY_SLEEP: 10000
