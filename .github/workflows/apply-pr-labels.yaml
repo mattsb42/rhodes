@@ -12,4 +12,4 @@ jobs:
                 with:
                     configuration-path: .github/branch-pr-labels.yaml
                 env:
-                    GITHUB_TOKEN: ${{ secrets.PROMOTION_TOKEN }}
+                    GITHUB_TOKEN: ${{ secrets.ADMIN_TOKEN }}
