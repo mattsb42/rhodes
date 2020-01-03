@@ -32,7 +32,7 @@ jobs:
                     MERGE_RETRIES: 240
                     MERGE_RETRY_SLEEP: 30000
     automerge-to-master:
-        if: (github.head_ref == 'development' && github.base_ref == 'master')
+        if: github.head_ref == 'development' && github.base_ref == 'master'
         runs-on: ubuntu-latest
         steps:
             -   name: automerge
