@@ -11,6 +11,8 @@ repository:
 collaborators:
     -   username: mattsb42-aws
         permission: admin
+    -   username: mattsb42-bot
+        permission: admin
 
 labels:
     # Default labels
