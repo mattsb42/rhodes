@@ -11,11 +11,13 @@ on:
             - ready_for_review
             - reopened
             - unlocked
-        branches:
-            - master
+    pull_request_review:
+        types:
+            - submitted
 
 jobs:
     automerge:
+        if: github.head_ref == 'development' && github.base_ref == 'master'
         runs-on: ubuntu-latest
         steps:
             -   name: automerge
