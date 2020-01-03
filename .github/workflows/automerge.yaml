@@ -16,7 +16,7 @@ on:
             - submitted
 
 jobs:
-    # Separate jobs to make sure that we don't merge to master from a branch named "development" on a fork
+    # Auto-approve anything to development as long as it meets the merge requirements
     automerge-to-development:
         if: github.base_ref == 'development'
         runs-on: ubuntu-latest
@@ -31,6 +31,7 @@ jobs:
                     # Retry every 10s for 30m
                     MERGE_RETRIES: 180
                     MERGE_RETRY_SLEEP: 10000
+    # Only auto-approve PRs to master if they came from development in this fork
     automerge-to-master:
         if: github.head_ref == 'development' && github.base_ref == 'master'
         runs-on: ubuntu-latest
