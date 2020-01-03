@@ -6,6 +6,7 @@
    :caption: Project Operations
 
    versioning
+   contributing
    changelog
 
 .. toctree::
