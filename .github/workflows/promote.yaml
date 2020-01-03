@@ -1,1 +1,22 @@
-# Promote development to master
+name: Promote development branch to master
+
+on:
+    push:
+        branches:
+            - development
+
+jobs:
+    promote-to-master-pr:
+        name: Promote dev branch to master
+        runs-on: ubuntu-latest
+        steps:
+            -
+                name: promote
+                uses: vsoch/pull-request-action@1.0.1
+                env:
+                    GITHUB_TOKEN: ${{ secrets.PROMOTION_TOKEN }}
+                    BRANCH_PREFIX: development
+                    PULL_REQUEST_BRANCH: master
+                    PULL_REQUEST_TITLE: Promote development to master
+                    PULL_REQUEST_BODY: |
+                        Automatic promotion from development to master.
