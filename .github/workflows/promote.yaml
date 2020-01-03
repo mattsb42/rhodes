@@ -13,7 +13,7 @@ jobs:
             -   name: promote
                 uses: vsoch/pull-request-action@master
                 env:
-                    GITHUB_TOKEN: ${{ secrets.PROMOTION_TOKEN }}
+                    GITHUB_TOKEN: ${{ secrets.MERGE_TOKEN }}
                     BRANCH_PREFIX: development
                     PULL_REQUEST_BRANCH: master
                     PULL_REQUEST_TITLE: Promote development to master
