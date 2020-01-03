@@ -1,0 +1,15 @@
+name: Apply PR labels
+
+on: [pull_request]
+
+jobs:
+    automerge-promotion-prs:
+        if: github.head_ref == 'development' && github.base_ref == 'master'
+        runs-on: ubuntu-latest
+        steps:
+            -   name: label-pr
+                uses: TimonVS/pr-labeler-action@v3
+                with:
+                    configuration-path: .github/branch-pr-labels.yaml
+                env:
+                    GITHUB_TOKEN: ${{ secrets.PROMOTION_TOKEN }}
