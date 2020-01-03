@@ -41,12 +41,15 @@ labels:
         color: ffffff
         description: This will not be worked on
     # Custom labels
-    -   name: docs-update-required
+    -   name: docs update required
         color: 62bf11
         description: This will require updates to documentation
     -   name: automerge
-        color: 3fe289
+        color: 00fa33
         description: This PR will be automatically merged once requirements are met
+    -   name: block merge
+        color: fa0033
+        description: This PR will NOT be automatically merged as long as this label is applied
 
 branches:
     -
