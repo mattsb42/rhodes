@@ -16,7 +16,22 @@ on:
             - submitted
 
 jobs:
-    automerge:
+    # Separate jobs to make sure that we don't merge to master from a branch named "development" on a fork
+    automerge-to-development:
+        if: github.base_ref == 'development'
+        runs-on: ubuntu-latest
+        steps:
+            -   name: automerge
+                uses: pascalgn/automerge-action@v0.6.1
+                env:
+                    GITHUB_TOKEN: ${{ secrets.PROMOTION_TOKEN }}
+                    MERGE_LABELS: "!block merge"
+                    MERGE_METHOD: squash
+                    MERGE_COMMIT_MESSAGE: automatic
+                    # Retry every 30s for 2h
+                    MERGE_RETRIES: 240
+                    MERGE_RETRY_SLEEP: 30000
+    automerge-to-master:
         if: github.head_ref == 'development' && github.base_ref == 'master'
         runs-on: ubuntu-latest
         steps:

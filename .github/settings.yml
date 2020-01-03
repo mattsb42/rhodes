@@ -107,11 +107,15 @@ branches:
         name: master
         protection:
             # Require at least one approving review on a pull request, before merging. Set to null to disable.
-            required_pull_request_reviews: null
+            required_pull_request_reviews:
+                # The number of approvals required. (1-6)
+                required_approving_review_count: 1
+                # Dismiss approved reviews automatically when a new commit is pushed.
+                dismiss_stale_reviews: true
             # Restrict who can push to this branch. Team and user restrictions are only available for organization-owned repositories. Set to null to disable.
             restrictions: null
             # Enforce all configured restrictions for administrators. Set to true to enforce required status checks for repository administrators. Set to null to disable.
-            enforce_admins: true
+            enforce_admins: false
             # Require status checks to pass before merging. Set to null to disable
             required_status_checks:
                 # Require branches to be up to date before merging.
@@ -129,6 +133,10 @@ branches:
                     - tests (ubuntu-latest, 3.8, x64, examples)
                     - tests (ubuntu-latest, 3.x, x64, local)
                     - tests (ubuntu-latest, 3.x, x64, examples)
+                    - integ-tests (ubuntu-latest, 3.6, x64, integ)
+                    - integ-tests (ubuntu-latest, 3.7, x64, integ)
+                    - integ-tests (ubuntu-latest, 3.8, x64, integ)
+                    - integ-tests (ubuntu-latest, 3.x, x64, integ)
                     # MacOS
                     - tests (macos-latest, 3.6, x64, local)
                     - tests (macos-latest, 3.6, x64, examples)
@@ -138,6 +146,10 @@ branches:
                     - tests (macos-latest, 3.8, x64, examples)
                     - tests (macos-latest, 3.x, x64, local)
                     - tests (macos-latest, 3.x, x64, examples)
+                    - integ-tests (macos-latest, 3.6, x64, integ)
+                    - integ-tests (macos-latest, 3.7, x64, integ)
+                    - integ-tests (macos-latest, 3.8, x64, integ)
+                    - integ-tests (macos-latest, 3.x, x64, integ)
                     # Windows x86
                     - tests (windows-latest, 3.6, x86, local)
                     - tests (windows-latest, 3.6, x86, examples)
@@ -147,6 +159,10 @@ branches:
                     - tests (windows-latest, 3.8, x86, examples)
                     - tests (windows-latest, 3.x, x86, local)
                     - tests (windows-latest, 3.x, x86, examples)
+                    - integ-tests (windows-latest, 3.6, x64, integ)
+                    - integ-tests (windows-latest, 3.7, x64, integ)
+                    - integ-tests (windows-latest, 3.8, x64, integ)
+                    - integ-tests (windows-latest, 3.x, x64, integ)
                     # Windows x64
                     - tests (windows-latest, 3.6, x64, local)
                     - tests (windows-latest, 3.6, x64, examples)
