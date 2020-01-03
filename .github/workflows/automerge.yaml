@@ -24,7 +24,7 @@ jobs:
             -   name: automerge
                 uses: pascalgn/automerge-action@v0.6.1
                 env:
-                    GITHUB_TOKEN: ${{ secrets.PROMOTION_TOKEN }}
+                    GITHUB_TOKEN: ${{ secrets.MERGE_TOKEN }}
                     MERGE_LABELS: "!block merge"
                     MERGE_METHOD: squash
                     MERGE_COMMIT_MESSAGE: automatic
@@ -38,7 +38,7 @@ jobs:
             -   name: automerge
                 uses: pascalgn/automerge-action@v0.6.1
                 env:
-                    GITHUB_TOKEN: ${{ secrets.PROMOTION_TOKEN }}
+                    GITHUB_TOKEN: ${{ secrets.MERGE_TOKEN }}
                     MERGE_LABELS: automerge,!block merge
                     MERGE_METHOD: squash
                     MERGE_COMMIT_MESSAGE: automatic
