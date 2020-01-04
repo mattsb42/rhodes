@@ -1,4 +1,5 @@
-from typing import Callable, Dict, TypeVar
+"""Internal utilities for service integrations."""
+from typing import Callable, Dict
 
 import attr
 from attr.validators import in_
@@ -14,6 +15,9 @@ __all__ = ("service_integration",)
 
 
 def service_integration(*options: IntegrationPattern) -> Callable[[StateMirror], StateMirror]:
+    # pylint: disable=protected-access
+    """Generate a decorator that turns a State class into a service integration helper."""
+
     def _decorate(cls: StateMirror) -> StateMirror:
         cls = task_type(cls)
 

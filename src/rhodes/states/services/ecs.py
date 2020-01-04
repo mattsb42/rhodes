@@ -16,7 +16,11 @@ __all__ = ("AmazonEcs",)
     IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.SYNCHRONOUS, IntegrationPattern.WAIT_FOR_CALLBACK
 )
 class AmazonEcs(State):
-    """
+    """Start a new task using the specified task definition.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_RunTask.html>`_
+
     :param Cluster: The short name or full Amazon Resource Name (ARN) of the cluster on which to run your task.
        If you do not specify a cluster, the default cluster is assumed.
     :param Group: The name of the task group to associate with the task.

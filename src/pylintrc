@@ -17,8 +17,8 @@ method-rgx = [a-z_][a-z0-9_]{2,50}$
 # Allow class attribute names up to 50 characters
 # Whitelist class attribute names:
 class-attribute-rgx = (([A-Za-z_][A-Za-z0-9_]{2,50}|(__.*__))$)
-# Whitelist attribute names:
-attr-rgx = ([a-z_][a-z0-9_]{2,30}$)
+# Whitelist attribute names: Allow PascalCase
+attr-rgx = ([a-z_][a-z0-9_]{2,30}$)|(^[A-Z][a-zA-Z]{2,30}$)
 # Whitelist argument names: iv
 argument-rgx = ([a-z_][a-z0-9_]{2,30}$)|(^iv$)
 # Whitelist variable names: iv

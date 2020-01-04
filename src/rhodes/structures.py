@@ -56,6 +56,7 @@ class ContextPath:
 
     @_path.validator
     def _validate_path(self, attribute, value):
+        # pylint: disable=no-self-use,unused-argument
         _valid_paths = {
             "Execution": {"Id": False, "Input": True, "StartTime": False},
             "State": {"EnteredTime": False, "Name": False, "RetryCount": False},
@@ -74,12 +75,9 @@ class ContextPath:
             except KeyError:
                 raise ValueError("Invalid Context Path")
 
-            if isinstance(inner_tree, dict):
-                if not remaining:
-                    # Requested path is a sub-object not an individual member
-                    return
-
-                return _validate_parts(inner_tree, remaining)
+            if isinstance(inner_tree, dict) and remaining:
+                # Walk down the members in the path
+                _validate_parts(inner_tree, remaining)
 
             if not inner_tree and remaining:
                 # Requested path is an unknown child
@@ -94,7 +92,7 @@ class ContextPath:
 
         # Path MUST start with "$$." not "$." to identify as Context Object
         if parts[0] != "$$":
-            raise ValueError("Invalid Context Path")
+            raise ValueError("Invalid Context Path. Context Path MUST start with '$$'")
 
         if len(parts) == 1:
             # Requested path is the entire Context Object
@@ -139,7 +137,7 @@ class Parameters:
             for name, value in self._map.items():
                 new_name, new_value = serialize_name_and_value(name=name, value=value)
 
-                if isinstance(value, JsonPath) or isinstance(value, ContextPath):
+                if isinstance(value, (JsonPath, ContextPath)):
                     # If you manually provide path strings, you must manually set the parameter suffix.
                     if not new_name.endswith(".$"):
                         new_name += ".$"

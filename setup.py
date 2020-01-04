@@ -30,9 +30,11 @@ def get_requireemnts():
         req = req.strip()
         if not req:
             continue
-        elif req.startswith("#"):
+
+        if req.startswith("#"):
             continue
-        elif "+" in req:
+
+        if "+" in req:
             dependencies.append(req)
         else:
             requirements.append(req)

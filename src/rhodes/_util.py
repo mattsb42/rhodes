@@ -1,5 +1,4 @@
-"""Utilities for use in Rhodes."""
-import io
+"""General internal utilities."""
 from functools import partial
 from typing import Any, Callable, Optional, Type, TypeVar
 
@@ -12,13 +11,20 @@ __all__ = ("RequiredValue", "require_field", "RHODES_ATTRIB", "docstring_with_pa
 
 @attr.s(auto_attribs=True)
 class RequiredValue:
+    """Identify a required value and the error message that should be raised if it is missing.
+
+    This is used to identify parameters that are required on serialization
+    but not necessarily initialization.
+    """
+
     field_name: str
     error_message: str
 
 
 def require_field(*, instance: Any, required_value: RequiredValue, validator: Callable[[Any], bool] = bool):
+    """Verify that a required field contains a valid value."""
     # TODO: The validator here is incorrect.
-    #  I need to pull the validatidator for the attribute from the instance class.
+    #  I need to pull the validator for the attribute from the instance class.
     if not hasattr(instance, required_value.field_name):
         raise InvalidDefinitionError(f"Field {required_value.field_name!r} missing.")
 
@@ -28,7 +34,7 @@ def require_field(*, instance: Any, required_value: RequiredValue, validator: Ca
 
 RHODES_ATTRIB = partial(attr.ib, default=None, kw_only=True)
 
-TypeMirror = TypeVar("StateMirror", bound=Type)
+TypeMirror = TypeVar("TypeMirror", bound=Type[Any])
 
 
 NO_DEFAULT = object()
@@ -49,7 +55,7 @@ def docstring_with_param(
     :param str description: Description for parameter to add to docstring
     :param default: The default value if this parameter is optional
     """
-    base = cls.__doc__[:].rstrip("\n")
+    base = getattr(cls, "__doc__", "")[:].rstrip("\n")
 
     base += "\n    :param "
 

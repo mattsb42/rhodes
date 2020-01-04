@@ -14,7 +14,14 @@ __all__ = ("AmazonSns",)
 @attr.s(eq=False)
 @service_integration(IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.WAIT_FOR_CALLBACK)
 class AmazonSns(State):
-    """
+    """Send a message to target using Amazon SNS.
+    Target can be an Amazon SNS topic,
+    a text message (SMS message) directly to a phone number,
+    or a message to a mobile platform endpoint (when you specify the TargetArn).
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/sns/latest/api/API_Publish.html>`_
+
     :param Message: The message you want to send.
     :param MessageAttributes: Message attributes for Publish action.
     :param MessageStructure: Set MessageStructure to json if you want to send a different message for each protocol.

@@ -14,7 +14,11 @@ __all__ = ("AmazonSqs",)
 @attr.s(eq=False)
 @service_integration(IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.WAIT_FOR_CALLBACK)
 class AmazonSqs(State):
-    """
+    """Deliver a message to the specified queue.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_SendMessage.html>`_
+
     :param DelaySeconds: The length of time, in seconds, for which to delay a specific message.
        Valid values: 0 to 900. Maximum: 15 minutes.
     :param MessageAttribute: Each message attribute consists of a Name, Type, and Value.

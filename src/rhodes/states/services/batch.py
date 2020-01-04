@@ -15,7 +15,11 @@ __all__ = ("AwsBatch",)
 @attr.s(eq=False)
 @service_integration(IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.SYNCHRONOUS)
 class AwsBatch(State):
-    """
+    """Submit an AWS Batch job from a job definition.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/batch/latest/APIReference/API_SubmitJob.html>`_
+
     :param JobDefinition:
     :param JobName:
     :param JobQueue:
