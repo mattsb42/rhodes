@@ -1,3 +1,4 @@
+"""Common types used throughout Rhodes for use at runtime."""
 from enum import Enum
 from typing import Tuple
 
@@ -5,7 +6,7 @@ from rhodes.identifiers import ServiceArn
 from rhodes.structures import JsonPath, Parameters
 
 try:
-    from troposphere import awslambda, stepfunctions, Ref, GetAtt, AWSHelperFn
+    from troposphere import awslambda, stepfunctions, AWSHelperFn
 
     TROPOSPHERE = True
 except ImportError:

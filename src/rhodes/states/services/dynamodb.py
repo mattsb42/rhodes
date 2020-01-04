@@ -18,7 +18,7 @@ __all__ = (
     "AmazonDynamoDbUpdateItem",
 )
 
-_ddb_service_integration = service_integration(IntegrationPattern.REQUEST_RESPONSE)
+_DDB_INTEGRATION = service_integration(IntegrationPattern.REQUEST_RESPONSE)
 
 
 @attr.s
@@ -31,15 +31,35 @@ class AmazonDynamoDb:
     TableName = RHODES_ATTRIB(validator=instance_of(str))
 
     def get_item(self, **kwargs) -> "AmazonDynamoDbGetItem":
+        """Return a set of attributes for the item with the given primary key.
+
+        ``TableName`` as well as any provided kwargs
+        are passed to the :class:`AmazonDynamoDbGetItem` constructor.
+        """
         return AmazonDynamoDbGetItem(TableName=self.TableName, **kwargs)
 
     def put_item(self, **kwargs) -> "AmazonDynamoDbPutItem":
+        """Create a new item or replace an old item with a new item.
+
+        ``TableName`` as well as any provided kwargs
+        are passed to the :class:`AmazonDynamoDbPutItem` constructor.
+        """
         return AmazonDynamoDbPutItem(TableName=self.TableName, **kwargs)
 
     def delete_item(self, **kwargs) -> "AmazonDynamoDbDeleteItem":
+        """Delete a single item in a table by primary key.
+
+        ``TableName`` as well as any provided kwargs
+        are passed to the :class:`AmazonDynamoDbDeleteItem` constructor.
+        """
         return AmazonDynamoDbDeleteItem(TableName=self.TableName, **kwargs)
 
     def update_item(self, **kwargs) -> "AmazonDynamoDbUpdateItem":
+        """Edit an existing item's attributes or add a new item to the table if it does not already exist.
+
+        ``TableName`` as well as any provided kwargs
+        are passed to the :class:`AmazonDynamoDbUpdateItem` constructor.
+        """
         return AmazonDynamoDbUpdateItem(TableName=self.TableName, **kwargs)
 
 
@@ -135,9 +155,13 @@ def _ddb_write_attributes(cls: StateMirror) -> StateMirror:
 @attr.s(eq=False)
 @_ddb_key
 @_ddb_table_name
-@_ddb_service_integration
+@_DDB_INTEGRATION
 class AmazonDynamoDbGetItem(State):
-    """
+    """Return a set of attributes for the item with the given primary key.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_GetItem.html>`_
+
     :param AttributesToGet: This is a legacy parameter. Use ProjectionExpression instead.
        For more information, see AttributesToGet in the Amazon DynamoDB Developer Guide.
     :param ConsistentRead: Determines the read consistency model
@@ -166,9 +190,13 @@ class AmazonDynamoDbGetItem(State):
 @attr.s(eq=False)
 @_ddb_write_attributes
 @_ddb_table_name
-@_ddb_service_integration
+@_DDB_INTEGRATION
 class AmazonDynamoDbPutItem(State):
-    """
+    """Create a new item or replace an old item with a new item.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_PutItem.html>`_
+
     :param Item: A map of attribute name/value pairs, one for each attribute.
     """
 
@@ -188,9 +216,14 @@ class AmazonDynamoDbPutItem(State):
 @_ddb_write_attributes
 @_ddb_key
 @_ddb_table_name
-@_ddb_service_integration
+@_DDB_INTEGRATION
 class AmazonDynamoDbDeleteItem(State):
-    """"""
+    """Delete a single item in a table by primary key.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_DeleteItem.html>`_
+
+    """
 
     _required_fields = (
         RequiredValue("Item", "Amazon DynamoDB DeleteItem Task requires a key value"),
@@ -206,9 +239,13 @@ class AmazonDynamoDbDeleteItem(State):
 @_ddb_write_attributes
 @_ddb_key
 @_ddb_table_name
-@_ddb_service_integration
+@_DDB_INTEGRATION
 class AmazonDynamoDbUpdateItem(State):
-    """
+    """Edit an existing item's attributes or add a new item to the table if it does not already exist.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateItem.html>`_
+
     :param AttributeUpdates: This is a legacy parameter. Use UpdateExpression instead.
        For more information, see AttributeUpdates in the Amazon DynamoDB Developer Guide.
     :param UpdateExpression: An expression that defines one or more attributes to be updated,

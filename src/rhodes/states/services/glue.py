@@ -14,7 +14,11 @@ __all__ = ("AwsGlue",)
 @attr.s(eq=False)
 @service_integration(IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.SYNCHRONOUS)
 class AwsGlue(State):
-    """
+    """Start a job run using a job definition.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-jobs-runs.html#aws-glue-api-jobs-runs-StartJobRun>`_
+
     :param JobName: The name of the job definition to use.
     :param JobRunId: The ID of a previous JobRun to retry.
     :param Arguments: The job arguments specifically for this run.

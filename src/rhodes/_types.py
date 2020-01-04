@@ -1,3 +1,5 @@
+"""Common types used throughout Rhodes for use during static analysis."""
+# I'm using types as constants, so pylint: disable=invalid-name
 from enum import Enum
 from typing import Any, Optional, TypeVar, Union
 

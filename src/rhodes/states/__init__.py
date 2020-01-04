@@ -1,4 +1,10 @@
-""""""
+"""
+Standard Step Functions and state machine states.
+
+`See Step Functions docs for more details.
+<https://docs.aws.amazon.com/step-functions/latest/dg/concepts-states.html>`_
+
+"""
 import json
 from enum import Enum
 from typing import Any, Dict, Iterable, List, Optional, Union
@@ -110,11 +116,15 @@ class State:
 class StateMachine:
     """Step Functions State Machine.
 
+    `See Step Functions docs for more details.
+    <https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-state-machine-structure.html>`_
+
     :param States: Map of states that make up this state machine
     :type States: dict(str, State)
     :param str StartAt: The state where this state machine starts
     :param str Comment: Human-readable description of the state
-    :param str Version: The version of the Amazon States Language used in this state machine (must be ``1.0`` if provided)
+    :param str Version: The version of the Amazon States Language used in this state machine
+      (must be ``1.0`` if provided)
     :param int TimeoutSeconds: Maximum time that this state machine is allowed to run
     """
 
@@ -124,17 +134,17 @@ class StateMachine:
     ]
     __setup_complete = False
 
-    States = RHODES_ATTRIB(
+    States: Dict[str, State] = RHODES_ATTRIB(
         default=attr.Factory(dict),
         validator=deep_mapping(key_validator=instance_of(str), value_validator=instance_of(State)),
     )
     # TODO: Name of State
-    StartAt = RHODES_ATTRIB(validator=optional(instance_of(str)))
-    Comment = RHODES_ATTRIB(validator=optional(instance_of(str)))
+    StartAt: Optional[str] = RHODES_ATTRIB(validator=optional(instance_of(str)))
+    Comment: Optional[str] = RHODES_ATTRIB(validator=optional(instance_of(str)))
     # TODO: MUST be 1.0 if provided
-    Version = RHODES_ATTRIB(validator=optional(instance_of(str)))
+    Version: Optional[str] = RHODES_ATTRIB(validator=optional(instance_of(str)))
     # TODO: MUST be non-negative
-    TimeoutSeconds = RHODES_ATTRIB(validator=optional(instance_of(int)))
+    TimeoutSeconds: Optional[int] = RHODES_ATTRIB(validator=optional(instance_of(int)))
 
     def __attrs_post_init__(self):
         self.__setup_complete = True
@@ -206,7 +216,13 @@ class StateMachine:
 @_next_and_end
 @state
 class Pass(State):
-    """"""
+    """A Pass state passes its input to its output without performing work.
+    Pass states are useful when constructing and debugging state machines.
+
+    `See Step Functions docs for more details.
+    <https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-pass-state.html>`_
+
+    """
 
     Result = RHODES_ATTRIB()
 
@@ -215,7 +231,12 @@ class Pass(State):
 @_parameters
 @task_type
 class Task(State):
-    """"""
+    """A Task state represents a single unit of work performed by a state machine.
+
+    `See Step Functions docs for more details.
+    <https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-task-state.html>`_
+
+    """
 
     _required_fields = [RequiredValue("Resource", "Task resource is not set.")]
 
@@ -227,16 +248,90 @@ class Task(State):
 @_input_output
 @state
 class Choice(State):
-    """"""
+    """A Choice state adds branching logic to a state machine.
 
-    # TODO: Validate that Next and Default states are in parent
-    # TODO: Choice does not allow
+    `See Step Functions docs for more details.
+    <https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-choice-state.html>`_
+
+    .. code-block:: python
+
+        workflow = StateMachine()
+
+        next_state = Pass("Ok number")
+
+        decision = workflow.start_with(Choice("Make a decision"))
+        decision.if_(VariablePath("$.foo.bar") == 12).then(next_state)
+        decision.if_(VariablePath("$.foo.bar") < 0).then(Fail("Negative value!"))
+        decision.if_(all_(
+            VariablePath("$.foo.bar") != 12,
+            VariablePath("$.baz.wow") == "not 12!",
+        )).then(next_state)
+        decision.else_(Succeed("Something else!"))
+
+        next_state.end()
+
+    .. code-block:: json
+
+        {
+            "States": {
+                "Make a decision": {
+                    "Type": "Choice",
+                    "Choices": [
+                        {
+                            "Variable": "$.foo.bar",
+                            "NumericEquals": 12,
+                            "Next": "Ok number"
+                        },
+                        {
+                            "Variable": "$.foo.bar",
+                            "NumericLessThan": 0,
+                            "Next": "Negative value!"
+                        },
+                        {
+                            "And": [
+                                {
+                                    "Not": {
+                                        "Variable": "$.foo.bar",
+                                        "NumericEquals": 12
+                                    }
+                                },
+                                {
+                                    "Variable": "$.baz.wow",
+                                    "StringEquals": "not 12!"
+                                }
+                            ],
+                            "Next": "Ok number"
+                        }
+                    ],
+                    "Default": "Something else!"
+                },
+                "Ok number": {
+                    "Type": "Pass",
+                    "End": true
+                },
+                "Negative value!": {
+                    "Type": "Fail"
+                },
+                "Something else!": {
+                    "Type": "Succeed"
+                }
+            }
+        }
+
+    """
+
     Choices: List[ChoiceRule] = RHODES_ATTRIB(
         default=attr.Factory(list), validator=deep_iterable(member_validator=instance_of(ChoiceRule))
     )
     Default: Optional[str] = RHODES_ATTRIB(validator=optional(instance_of(str)))
 
     def add_choice(self, rule: ChoiceRule) -> ChoiceRule:
+        """Add a choice rule to this state.
+        This is the lower-level interface that :method:`if_` uses.
+
+        :param rule: Rule to add
+        :return: ``rule``
+        """
         if rule.member_of is not None:
             if rule.member_of is self:
                 return rule
@@ -248,9 +343,35 @@ class Choice(State):
         return rule
 
     def if_(self, rule: ChoiceRule) -> ChoiceRule:
+        """Add a choice rule to this state as one possible logic branch.
+        This should be followed up with a ``.then(STATE)`` call.
+
+        .. code-block:: python
+
+            decision.if_(VariablePath("$.foo.bar") == 12).then(next_state)
+
+        This results in the rule definition:
+
+        .. code-block:: json
+
+            {
+                "Variable": "$.foo.bar",
+                "NumericEquals": 12,
+                "Next": "NEXT_STATE_NAME"
+            }
+
+        :param rule: The rule to add
+        :returns: ``rule``
+        """
         return self.add_choice(rule)
 
     def else_(self, state: State) -> State:
+        """Add a default state.
+        This is the state to transition to if none of the choice rules are satisfied.
+
+        :param state: The default state to add
+        :return: ``state``
+        """
         if self.Default is not None:
             raise InvalidDefinitionError(f'Choice state "{self.title}" already has a Default transition.')
 
@@ -262,13 +383,24 @@ class Choice(State):
         return state
 
     def to_dict(self) -> Dict:
+        """Serialize state as a dictionary."""
         if not self.Choices:
-            raise InvalidDefinitionError(f'Choice state "{self.title}" has no defined choices.')
+            raise InvalidDefinitionError(f"Choice state '{self.title}' has no defined choices.")
+
+        if self.member_of is not None and self.Default not in self.member_of.States:
+            raise InvalidDefinitionError(
+                f"Default state '{self.Default}' for Choice state '{self.title}' is not present in state machine."
+            )
 
         self_dict = super(Choice, self).to_dict()
 
         for pos, branch in enumerate(self_dict["Choices"]):
             self_dict["Choices"][pos] = branch.to_dict()
+            if self.member_of is not None and branch.Next not in self.member_of.States:
+                raise InvalidDefinitionError(
+                    f"Choice rule next state '{branch.Next}' "
+                    f"for Choice state '{self.title}' is not present in state machine."
+                )
 
         return self_dict
 
@@ -278,7 +410,15 @@ class Choice(State):
 @_next_and_end
 @state
 class Wait(State):
-    """"""
+    """A Wait state delays the state machine from continuing for a specified time.
+    You can choose either a relative time,
+    specified in seconds from when the state begins,
+    or an absolute end time, specified as a timestamp.
+
+    `See Step Functions docs for more details.
+    <https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-wait-state.html>`_
+
+    """
 
     # TODO: Required only one of these on serialization
 
@@ -298,50 +438,65 @@ class Wait(State):
 
     @Seconds.validator
     def _check_timestamp(self, attribute: attr.Attribute, value: Any):
+        # pylint: disable=no-self-use,unused-argument
         if value is None:
             return
 
-        if not (self.Timestamp is self.SecondsPath is self.TimestampPath is None):
+        if not self.Timestamp is self.SecondsPath is self.TimestampPath is None:
             raise self._exactly_one
 
     @Timestamp.validator
     def _check_timestamp(self, attribute: attr.Attribute, value: Any):
+        # pylint: disable=no-self-use,unused-argument
         if value is None:
             return
 
         if not is_valid_timestamp(value):
             raise ValueError(f"Invalid Timestamp value: {value}")
 
-        if not (self.Seconds is self.SecondsPath is self.TimestampPath is None):
+        if not self.Seconds is self.SecondsPath is self.TimestampPath is None:
             raise self._exactly_one
 
     @SecondsPath.validator
     def _check_timestamp(self, attribute: attr.Attribute, value: Any):
+        # pylint: disable=no-self-use,unused-argument
         if value is None:
             return
 
-        if not (self.Timestamp is self.Seconds is self.TimestampPath is None):
+        if not self.Timestamp is self.Seconds is self.TimestampPath is None:
             raise self._exactly_one
 
     @TimestampPath.validator
     def _check_timestamp(self, attribute: attr.Attribute, value: Any):
+        # pylint: disable=no-self-use,unused-argument
         if value is None:
             return
 
-        if not (self.Timestamp is self.Seconds is self.SecondsPath is None):
+        if not self.Timestamp is self.Seconds is self.SecondsPath is None:
             raise self._exactly_one
 
 
 @attr.s(eq=False)
 @state
 class Succeed(State):
-    """"""
+    """A Succeed state stops an execution successfully.
+    The Succeed state is a useful target for Choice state branches that don't do anything but stop the execution.
+
+    `See Step Functions docs for more details.
+    <https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-succeed-state.html>`_
+
+    """
 
 
 @attr.s(eq=False)
 @state
 class Fail(State):
-    """"""
+    """A Fail state stops the execution of the state machine and marks it as a failure.
+
+    `See Step Functions docs for more details.
+    <https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-fail-state.html>`_
+
+    """
 
     Error: Optional[str] = RHODES_ATTRIB(validator=optional(instance_of(str)))
     Cause: Optional[str] = RHODES_ATTRIB(validator=optional(instance_of(str)))
@@ -355,12 +510,18 @@ class Fail(State):
 @_next_and_end
 @state
 class Parallel(State):
-    """"""
+    """The Parallel state can be used to create parallel branches of execution in your state machine.
+
+    `See Step Functions docs for more details.
+    <https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-parallel-state.html>`_
+
+    """
 
     # TODO: Each branch MUST be a self-contained state machine.
     Branches: List[StateMachine] = RHODES_ATTRIB(default=attr.Factory(list))
 
     def to_dict(self) -> Dict:
+        """Serialize state as a dictionary."""
         self_dict = super(Parallel, self).to_dict()
 
         for pos, branch in enumerate(self_dict["Branches"]):
@@ -369,6 +530,12 @@ class Parallel(State):
         return self_dict
 
     def add_branch(self, state_machine: Optional[StateMachine] = None) -> StateMachine:
+        """Add a parallel branch to this state.
+        If ``state_machine`` is not provided, we generate an empty state machine and add that.
+
+        :param state_machine: State machine to add (optional)
+        :return: ``state_machine`` if provided or a new empty state machine if not
+        """
         if state_machine is None:
             state_machine = StateMachine()
 
@@ -384,7 +551,14 @@ class Parallel(State):
 @_next_and_end
 @state
 class Map(State):
-    """"""
+    """The Map state can be used to run a set of steps for each element of an input array.
+    While the Parallel state executes multiple branches of steps using the same input,
+    a Map state will execute the same steps for multiple entries of an array in the state input.
+
+    `See Step Functions docs for more details.
+    <https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-map-state.html>`_
+
+    """
 
     _required_fields = [
         RequiredValue("Iterator", "Map iterator must be set."),

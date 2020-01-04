@@ -20,9 +20,7 @@ __all__ = (
     "AmazonSageMakerUpdateEndpoint",
 )
 
-_sagemaker_service_integration = service_integration(
-    IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.SYNCHRONOUS
-)
+_SAGEMAKER_INTEGRATION = service_integration(IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.SYNCHRONOUS)
 
 
 def _tags(cls: StateMirror) -> StateMirror:
@@ -60,9 +58,14 @@ def _endpoint_name(cls: StateMirror) -> StateMirror:
 @_tags
 @_endpoint_name
 @_endpoint_config_name
-@_sagemaker_service_integration
+@_SAGEMAKER_INTEGRATION
 class AmazonSageMakerCreateEndpoint(State):
-    """"""
+    """Create an endpoint using the endpoint configuration specified in the request.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/sagemaker/latest/dg/API_CreateEndpoint.html>`_
+
+    """
 
     _required_fields = ()
     _resource_name = ServiceArn.SAGEMAKER_CREATE_ENDPOINT
@@ -74,9 +77,13 @@ class AmazonSageMakerCreateEndpoint(State):
 @attr.s(eq=False)
 @_tags
 @_endpoint_config_name
-@_sagemaker_service_integration
+@_SAGEMAKER_INTEGRATION
 class AmazonSageMakerCreateEndpointConfig(State):
-    """
+    """Create an endpoint configuration that Amazon SageMaker hosting services uses to deploy models.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/sagemaker/latest/dg/API_CreateEndpointConfig.html>`_
+
     :param KmsKeyId: The Amazon Resource Name (ARN) of a AWS Key Management Service key
        that Amazon SageMaker uses to encrypt data on the storage volume
        attached to the ML compute instance that hosts the endpoint.
@@ -96,9 +103,13 @@ class AmazonSageMakerCreateEndpointConfig(State):
 
 @attr.s(eq=False)
 @_tags
-@_sagemaker_service_integration
+@_SAGEMAKER_INTEGRATION
 class AmazonSageMakerCreateHyperParameterTuningJob(State):
-    """
+    """Start a hyperparameter tuning job.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/sagemaker/latest/dg/API_CreateHyperParameterTuningJob.html>`_
+
     :param HyperParameterTuningJobConfig: The HyperParameterTuningJobConfig object that describes the tuning job,
        including the search strategy, the objective metric used to evaluate training jobs,
        ranges of parameters to search, and resource limits for the tuning job.
@@ -131,9 +142,13 @@ class AmazonSageMakerCreateHyperParameterTuningJob(State):
 
 @attr.s(eq=False)
 @_tags
-@_sagemaker_service_integration
+@_SAGEMAKER_INTEGRATION
 class AmazonSageMakerCreateLabelingJob(State):
-    """
+    """Create a job that uses workers to label the data objects in your input dataset.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/sagemaker/latest/dg/API_CreateLabelingJob.html>`_
+
     :param HumanTaskConfig: Configures the labeling task and how it is presented to workers;
        including, but not limited to price, keywords, and batch size (task count).
     :param InputConfig: Input data for the labeling job, such as the Amazon S3 location of the data objects
@@ -173,9 +188,13 @@ class AmazonSageMakerCreateLabelingJob(State):
 
 @attr.s(eq=False)
 @_tags
-@_sagemaker_service_integration
+@_SAGEMAKER_INTEGRATION
 class AmazonSageMakerCreateModel(State):
-    """
+    """Create a model in Amazon SageMaker.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/sagemaker/latest/dg/API_CreateModel.html>`_
+
     :param Containers: Specifies the containers in the inference pipeline.
     :param EnableNetworkIsolation: Isolates the model container.
        No inbound or outbound network calls can be made to or from the model container.
@@ -204,9 +223,13 @@ class AmazonSageMakerCreateModel(State):
 
 @attr.s(eq=False)
 @_tags
-@_sagemaker_service_integration
+@_SAGEMAKER_INTEGRATION
 class AmazonSageMakerCreateTrainingJob(State):
-    """
+    """Start a model training job.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/sagemaker/latest/dg/API_CreateTrainingJob.html>`_
+
     :param AlgorithmSpecification: The registry path of the Docker image that contains the training algorithm
        and algorithm-specific metadata, including the input mode.
     :param HyperParameters: Algorithm-specific parameters that influence the quality of the model.
@@ -246,9 +269,13 @@ class AmazonSageMakerCreateTrainingJob(State):
 
 @attr.s(eq=False)
 @_tags
-@_sagemaker_service_integration
+@_SAGEMAKER_INTEGRATION
 class AmazonSageMakerCreateTransformJob(State):
-    """
+    """Start a transform job.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/sagemaker/latest/dg/API_CreateTransformJob.html>`_
+
     :param BatchStrategy: Specifies the number of records to include in a mini-batch for an HTTP inference request.
        A record is a single unit of input data that inference can be made on.
        For example, a single line in a CSV file is a record.
@@ -287,9 +314,16 @@ class AmazonSageMakerCreateTransformJob(State):
 @_tags
 @_endpoint_name
 @_endpoint_config_name
-@_sagemaker_service_integration
+@_SAGEMAKER_INTEGRATION
 class AmazonSageMakerUpdateEndpoint(State):
-    """"""
+    """Deploy the new EndpointConfig specified in the request.
+    Then switch to using newly created endpoint
+    and delete resources provisioned for the endpoint using the previous EndpointConfig.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/sagemaker/latest/dg/API_UpdateEndpoint.html>`_
+
+    """
 
     _required_fields = ()
     _resource_name = ServiceArn.SAGEMAKER_UPDATE_ENDPOINT

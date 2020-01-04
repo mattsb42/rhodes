@@ -1,3 +1,4 @@
+"""Decorators for adding parameters and methods to State classes."""
 from typing import Any
 
 import attr
@@ -36,9 +37,14 @@ def _next_and_end(cls: "StateMirror") -> "StateMirror":
     def _then(instance, next_state):
         """Set the next state in this state machine."""
 
-        if instance.End:
+        if instance.End is not None:
             raise InvalidDefinitionError(
-                "Cannot set state transition." f"State {instance.title!r} already has an end condition."
+                f"Cannot set state transition. State {instance.title!r} already has an end condition."
+            )
+
+        if instance.Next is not None:
+            raise InvalidDefinitionError(
+                f"Cannot set state transition. State {instance.title!r} already has a state transition."
             )
 
         instance.member_of.add_state(next_state)
@@ -51,7 +57,7 @@ def _next_and_end(cls: "StateMirror") -> "StateMirror":
     def _end(instance):
         """Make this state a terminal state."""
 
-        if instance.Next:
+        if instance.Next is not None:
             raise InvalidDefinitionError(
                 "Cannot set end condition." f"State {instance.title!r} already has a state transition."
             )

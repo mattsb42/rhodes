@@ -18,7 +18,11 @@ __all__ = ("AwsStepFunctions",)
     IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.SYNCHRONOUS, IntegrationPattern.WAIT_FOR_CALLBACK
 )
 class AwsStepFunctions(State):
-    """
+    """Start a state machine execution.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/step-functions/latest/apireference/API_StartExecution.html>`_
+
     :param StateMachineArn: The AWS Step Functions state machine to invoke
     :type StateMachineArn: :class:`JsonPath`, :class:`AWSHelperFn`, str, or :class:`Enum`
     :param Input: Data to provide to the state machine as input
@@ -27,9 +31,6 @@ class AwsStepFunctions(State):
 
     _required_fields = (RequiredValue("StateMachineArn", "AWS Step Functions Task requires a state machine target"),)
     _resource_name = ServiceArn.STEP_FUNCTIONS
-
-    # TODO: Sort out validation rules
-    #  https://docs.aws.amazon.com/step-functions/latest/apireference/API_StartExecution.html#API_StartExecution_RequestSyntax
 
     StateMachineArn = RHODES_ATTRIB(validator=optional(instance_of(SERVICE_INTEGRATION_SIMPLE_VALUE_TYPES)))
     # SFn docs say that this needs to be a string,

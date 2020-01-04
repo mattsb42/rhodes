@@ -1,3 +1,4 @@
+"""Helpers for serializing values into Amazon States Language and CloudFormation syntax."""
 from enum import Enum
 from typing import Any, Tuple
 
@@ -21,13 +22,13 @@ def _ref(value: str) -> str:
 
 def _serialize_troposphere_value(value):
     # Inject appropriate Ref/GetAtt for Troposphere
-    GET_ARN = (awslambda.Function,)
-    GET_REF = (stepfunctions.Activity,)
+    get_arn = (awslambda.Function,)
+    get_ref = (stepfunctions.Activity,)
 
-    if isinstance(value, GET_ARN):
+    if isinstance(value, get_arn):
         return _getatt_arn(value.title)
 
-    if isinstance(value, GET_REF):
+    if isinstance(value, get_ref):
         return _ref(value.title)
 
     if isinstance(value, Ref):
@@ -40,6 +41,7 @@ def _serialize_troposphere_value(value):
 
 
 def serialize_name_and_value(*, name: str, value: Any) -> Tuple[str, Any]:
+    """Serialize a value to the value that should be in the serialized dictionary."""
     if TROPOSPHERE:
         value = _serialize_troposphere_value(value)
 

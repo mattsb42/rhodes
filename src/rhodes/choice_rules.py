@@ -1,3 +1,10 @@
+"""
+Rules for defining the branching logic in :class:`Choice` states.
+
+`See Step Functions docs for more details.
+<https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-choice-state.html#amazon-states-language-choice-state-rules>`_
+
+"""
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
@@ -211,11 +218,12 @@ def _timestamp(cls):
 
 @attr.s(eq=False)
 class ChoiceRule:
-    """"""
+    """Base class for all choice rules."""
 
     member_of = None
 
     def to_dict(self):
+        """Serialize state as a dictionary."""
         raise NotImplementedError()
 
     def __eq__(self, other: "ChoiceRule") -> bool:
@@ -250,114 +258,115 @@ class ChoiceRule:
 @attr.s(eq=False)
 @_string
 class StringEquals(ChoiceRule):
-    """"""
+    """"""  # pylint: disable=empty-docstring
 
 
 @attr.s(eq=False)
 @_string
 class StringLessThan(ChoiceRule):
-    """"""
+    """"""  # pylint: disable=empty-docstring
 
 
 @attr.s(eq=False)
 @_string
 class StringGreaterThan(ChoiceRule):
-    """"""
+    """"""  # pylint: disable=empty-docstring
 
 
 @attr.s(eq=False)
 @_string
 class StringLessThanEquals(ChoiceRule):
-    """"""
+    """"""  # pylint: disable=empty-docstring
 
 
 @attr.s(eq=False)
 @_string
 class StringGreaterThanEquals(ChoiceRule):
-    """"""
+    """"""  # pylint: disable=empty-docstring
 
 
 @attr.s(eq=False)
 @_number
 class NumericEquals(ChoiceRule):
-    """"""
+    """"""  # pylint: disable=empty-docstring
 
 
 @attr.s(eq=False)
 @_number
 class NumericLessThan(ChoiceRule):
-    """"""
+    """"""  # pylint: disable=empty-docstring
 
 
 @attr.s(eq=False)
 @_number
 class NumericGreaterThan(ChoiceRule):
-    """"""
+    """"""  # pylint: disable=empty-docstring
 
 
 @attr.s(eq=False)
 @_number
 class NumericLessThanEquals(ChoiceRule):
-    """"""
+    """"""  # pylint: disable=empty-docstring
 
 
 @attr.s(eq=False)
 @_number
 class NumericGreaterThanEquals(ChoiceRule):
-    """"""
+    """"""  # pylint: disable=empty-docstring
 
 
 @attr.s(eq=False)
 @_bool
 class BooleanEquals(ChoiceRule):
-    """"""
+    """"""  # pylint: disable=empty-docstring
 
 
 @attr.s(eq=False)
 @_timestamp
 class TimestampEquals(ChoiceRule):
-    """"""
+    """"""  # pylint: disable=empty-docstring
 
 
 @attr.s(eq=False)
 @_timestamp
 class TimestampLessThan(ChoiceRule):
-    """"""
+    """"""  # pylint: disable=empty-docstring
 
 
 @attr.s(eq=False)
 @_timestamp
 class TimestampGreaterThan(ChoiceRule):
-    """"""
+    """"""  # pylint: disable=empty-docstring
 
 
 @attr.s(eq=False)
 @_timestamp
 class TimestampLessThanEquals(ChoiceRule):
-    """"""
+    """"""  # pylint: disable=empty-docstring
 
 
 @attr.s(eq=False)
 @_timestamp
 class TimestampGreaterThanEquals(ChoiceRule):
-    """"""
+    """"""  # pylint: disable=empty-docstring
 
 
 @attr.s(eq=False)
 @_multi
 class And(ChoiceRule):
-    """"""
+    """Matches only if all of the provided rules are true."""
 
 
 @attr.s(eq=False)
 @_multi
 class Or(ChoiceRule):
-    """"""
+    """Matches if any of the provided rules are true."""
 
 
 @attr.s(eq=False)
 class Not(ChoiceRule):
-    """
+    """Matches only if the provided rule is false.
+
     :param ChoiceRule Rule: Rule that must evaluate as false
     :param Next: The state to which to continue if this rule evaluates as true
     """
@@ -371,6 +380,7 @@ class Not(ChoiceRule):
         _require_no_next(class_name=self.__class__.__name__, attribute_name=attribute.name, value=value)
 
     def to_dict(self, suppress_next=False):
+        """Serialize state as a dictionary."""
         if not suppress_next:
             _required_next(self)
 

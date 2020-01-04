@@ -23,7 +23,11 @@ AWS_LAMBDA_INVOCATION_TYPES = ("Event", AWS_LAMBDA_DEFAULT_INVOCATION_TYPE, "Dry
 @attr.s(eq=False)
 @service_integration(IntegrationPattern.REQUEST_RESPONSE, IntegrationPattern.WAIT_FOR_CALLBACK)
 class AwsLambda(State):
-    """
+    """Invoke a Lambda function.
+
+    `See service docs for more details.
+    <https://docs.aws.amazon.com/lambda/latest/dg/API_Invoke.html>`_
+
     :param FunctionName: AWS Lambda Function to call
     :param Payload: Data to provide to the Lambda Function as input
     :type Payload: :class:`Parameters`, :class:`JsonPath`, :class:`AWSHelperFn`, dict, str, or :class:`Enum`
@@ -63,6 +67,7 @@ class AwsLambda(State):
 
     @ClientContext.validator
     def _validate_clientcontext(self, attribute, value):
+        # pylint: disable=no-self-use,unused-argument
         if not isinstance(value, str):
             return
 
@@ -73,6 +78,7 @@ class AwsLambda(State):
 
     @Qualifier.validator
     def _validate_qualifier(self, attribute, value):
+        # pylint: disable=no-self-use,unused-argument
         if not isinstance(value, str):
             return
 
