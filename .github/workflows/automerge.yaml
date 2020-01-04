@@ -41,7 +41,7 @@ jobs:
                 env:
                     GITHUB_TOKEN: ${{ secrets.MERGE_TOKEN }}
                     MERGE_LABELS: automerge,!block merge
-                    MERGE_METHOD: squash
+                    MERGE_METHOD: merge
                     MERGE_COMMIT_MESSAGE: automatic
                     # Don't auto-merge from forks
                     MERGE_FORKS: false
