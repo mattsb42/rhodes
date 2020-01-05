@@ -35,7 +35,11 @@ class AwsStepFunctions(State):
     StateMachineArn = RHODES_ATTRIB(validator=optional(instance_of(SERVICE_INTEGRATION_SIMPLE_VALUE_TYPES)))
     # SFn docs say that this needs to be a string,
     #  but in practice JSON can be provided inline in the state machine
-    Input = RHODES_ATTRIB(validator=optional(instance_of(SERVICE_INTEGRATION_COMPLEX_VALUE_TYPES)))
+    Input = RHODES_ATTRIB(
+        validator=optional(
+            instance_of(SERVICE_INTEGRATION_COMPLEX_VALUE_TYPES + SERVICE_INTEGRATION_SIMPLE_VALUE_TYPES)
+        )
+    )
     # TODO: I'm inclined to say that either Name is not acceptable or that it MUST be a JsonPath.
     #  Leaving this alone until I can decide one way or the other.
     # Name = RHODES_ATTRIB()

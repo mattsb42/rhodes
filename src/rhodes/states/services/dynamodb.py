@@ -30,37 +30,37 @@ class AmazonDynamoDb:
 
     TableName = RHODES_ATTRIB(validator=instance_of(str))
 
-    def get_item(self, **kwargs) -> "AmazonDynamoDbGetItem":
+    def get_item(self, title, **kwargs) -> "AmazonDynamoDbGetItem":
         """Return a set of attributes for the item with the given primary key.
 
         ``TableName`` as well as any provided kwargs
         are passed to the :class:`AmazonDynamoDbGetItem` constructor.
         """
-        return AmazonDynamoDbGetItem(TableName=self.TableName, **kwargs)
+        return AmazonDynamoDbGetItem(title, TableName=self.TableName, **kwargs)
 
-    def put_item(self, **kwargs) -> "AmazonDynamoDbPutItem":
+    def put_item(self, title, **kwargs) -> "AmazonDynamoDbPutItem":
         """Create a new item or replace an old item with a new item.
 
         ``TableName`` as well as any provided kwargs
         are passed to the :class:`AmazonDynamoDbPutItem` constructor.
         """
-        return AmazonDynamoDbPutItem(TableName=self.TableName, **kwargs)
+        return AmazonDynamoDbPutItem(title, TableName=self.TableName, **kwargs)
 
-    def delete_item(self, **kwargs) -> "AmazonDynamoDbDeleteItem":
+    def delete_item(self, title, **kwargs) -> "AmazonDynamoDbDeleteItem":
         """Delete a single item in a table by primary key.
 
         ``TableName`` as well as any provided kwargs
         are passed to the :class:`AmazonDynamoDbDeleteItem` constructor.
         """
-        return AmazonDynamoDbDeleteItem(TableName=self.TableName, **kwargs)
+        return AmazonDynamoDbDeleteItem(title, TableName=self.TableName, **kwargs)
 
-    def update_item(self, **kwargs) -> "AmazonDynamoDbUpdateItem":
+    def update_item(self, title, **kwargs) -> "AmazonDynamoDbUpdateItem":
         """Edit an existing item's attributes or add a new item to the table if it does not already exist.
 
         ``TableName`` as well as any provided kwargs
         are passed to the :class:`AmazonDynamoDbUpdateItem` constructor.
         """
-        return AmazonDynamoDbUpdateItem(TableName=self.TableName, **kwargs)
+        return AmazonDynamoDbUpdateItem(title, TableName=self.TableName, **kwargs)
 
 
 def _ddb_table_name(cls: StateMirror) -> StateMirror:
@@ -226,7 +226,7 @@ class AmazonDynamoDbDeleteItem(State):
     """
 
     _required_fields = (
-        RequiredValue("Item", "Amazon DynamoDB DeleteItem Task requires a key value"),
+        RequiredValue("Key", "Amazon DynamoDB DeleteItem Task requires a key value"),
         RequiredValue("TableName", "Amazon DynamoDB DeleteItem Task requires a table value"),
     )
     _resource_name = ServiceArn.DYNAMODB_DELETE_ITEM
@@ -253,7 +253,7 @@ class AmazonDynamoDbUpdateItem(State):
     """
 
     _required_fields = (
-        RequiredValue("Item", "Amazon DynamoDB UpdateItem Task requires a key value"),
+        RequiredValue("Key", "Amazon DynamoDB UpdateItem Task requires a key value"),
         RequiredValue("TableName", "Amazon DynamoDB UpdateItem Task requires a table value"),
     )
     _resource_name = ServiceArn.DYNAMODB_UPDATE_ITEM

@@ -29,7 +29,7 @@ class AwsGlue(State):
     :param NotificationProperty: Specifies configuration properties of a job run notification.
     """
 
-    _required_fields = ()
+    _required_fields = (RequiredValue("JobName", "AWS Glue requires a job name."),)
     _resource_name = ServiceArn.GLUE
 
     # TODO: Sort out validation rules
