@@ -15,7 +15,7 @@ except ImportError:
 # resource types for the validator to use
 TASK_RESOURCE_TYPES: Tuple = (ServiceArn, str, Enum)
 SERVICE_INTEGRATION_SIMPLE_VALUE_TYPES: Tuple = (str, JsonPath, Enum)
-SERVICE_INTEGRATION_COMPLEX_VALUE_TYPES: Tuple = (JsonPath, Parameters, Enum)
+SERVICE_INTEGRATION_COMPLEX_VALUE_TYPES: Tuple = (JsonPath, Parameters, dict, Enum)
 AWS_LAMBDA_FUNCTION_TYPES: Tuple = SERVICE_INTEGRATION_SIMPLE_VALUE_TYPES[:]
 if TROPOSPHERE:
     TASK_RESOURCE_TYPES += (awslambda.Function, stepfunctions.Activity, AWSHelperFn)
