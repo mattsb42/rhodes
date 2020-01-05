@@ -14,24 +14,10 @@ jobs:
             matrix:
                 os:
                     - ubuntu-latest
-                    - windows-latest
-                    - macos-latest
                 python:
-                    - 3.6
-                    - 3.7
-                    - 3.8
                     - 3.x
-                architecture:
-                    - x64
-                    - x86
                 category:
                     - integ
-                # x86 builds are only meaningful for Windows
-                exclude:
-                    -   os: ubuntu-latest
-                        architecture: x86
-                    -   os: macos-latest
-                        architecture: x86
         steps:
             -   uses: actions/checkout@v2
             -   uses: actions/setup-python@v1
