@@ -14,10 +14,9 @@ from rhodes.identifiers import IntegrationPattern, ServiceArn
 from rhodes.states import State
 from rhodes.states.services._util import service_integration
 
-__all__ = ("AwsLambda",)
+__all__ = ("AwsLambda", "AWS_LAMBDA_INVOCATION_TYPES")
 
-AWS_LAMBDA_DEFAULT_INVOCATION_TYPE = "RequestResponse"
-AWS_LAMBDA_INVOCATION_TYPES = ("Event", AWS_LAMBDA_DEFAULT_INVOCATION_TYPE, "DryRun")
+AWS_LAMBDA_INVOCATION_TYPES = ("Event", "RequestResponse", "DryRun")
 
 
 @attr.s(eq=False)
@@ -34,6 +33,8 @@ class AwsLambda(State):
     :param ClientContext:
        Up to 3583 bytes of base64-encoded data about the invoking client to pass to the function in the context object
     :type ClientContext: :class:`JsonPath`, :class:`AWSHelperFn`, str, or :class:`Enum`
+    :param InvocationType: Determines how the Lambda Function is invoked
+    :type InvocationType: :class:`JsonPath`, :class:`AWSHelperFn`, str, or :class:`Enum`
     :param Qualifier: Version or alias of the Lambda Function to invoke
     :type Qualifier: :class:`JsonPath`, :class:`AWSHelperFn`, str, or :class:`Enum`
     """
@@ -50,20 +51,20 @@ class AwsLambda(State):
         )
     )
     ClientContext = RHODES_ATTRIB(validator=optional(instance_of(SERVICE_INTEGRATION_SIMPLE_VALUE_TYPES)))
-    # TODO: I'm pretty sure that InvocationType is not a valid input despite being in the Lambda API.
-    #  Circle back on this, but I'm disabling this for now.
-    # InvocationType = RHODES_ATTRIB(
-    #    default=AWS_LAMBDA_DEFAULT_INVOCATION_TYPE, validator=instance_of(SERVICE_INTEGRATION_SIMPLE_VALUE_TYPES)
-    # )
+    # TODO: Step Functions seems to accept InvocationType in a state machine definition,
+    #  but I'm still not convinced it's actually valid at execution time...
+    InvocationType = RHODES_ATTRIB(
+        default=None, validator=optional(instance_of(SERVICE_INTEGRATION_SIMPLE_VALUE_TYPES))
+    )
     Qualifier = RHODES_ATTRIB(validator=optional(instance_of(SERVICE_INTEGRATION_SIMPLE_VALUE_TYPES)))
 
-    # @InvocationType.validator
-    # def _validator_invocationtype(self, attribute, value):
-    #     if not isinstance(value, str):
-    #         return
-    #
-    #     if value not in AWS_LAMBDA_INVOCATION_TYPES:
-    #         raise ValueError(f"'InvocationType' value must be in {AWS_LAMBDA_INVOCATION_TYPES}.")
+    @InvocationType.validator
+    def _validator_invocationtype(self, attribute, value):
+        if not isinstance(value, str):
+            return
+
+        if value not in AWS_LAMBDA_INVOCATION_TYPES:
+            raise ValueError(f"'InvocationType' value must be in {AWS_LAMBDA_INVOCATION_TYPES}.")
 
     @ClientContext.validator
     def _validate_clientcontext(self, attribute, value):

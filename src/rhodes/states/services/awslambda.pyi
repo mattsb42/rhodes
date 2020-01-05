@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional, Tuple, Union
 
 from rhodes._types import (
     AWS_LAMBDA_FUNCTION,
@@ -22,7 +22,7 @@ from rhodes.identifiers import IntegrationPattern
 from rhodes.states import State
 from rhodes.structures import JsonPath
 
-AWS_LAMBDA_DEFAULT_INVOCATION_TYPE: str
+AWS_LAMBDA_INVOCATION_TYPES: Tuple
 
 class AwsLambda(State):
     def __init__(
@@ -42,7 +42,7 @@ class AwsLambda(State):
         FunctionName: Optional[SERVICE_INTEGRATION_SIMPLE_VALUE] = None,
         Payload: Optional[SERVICE_INTEGRATION_COMPLEX_VALUE] = None,
         ClientContext: Optional[SERVICE_INTEGRATION_SIMPLE_VALUE] = None,
-        InvocationType: SERVICE_INTEGRATION_SIMPLE_VALUE = AWS_LAMBDA_DEFAULT_INVOCATION_TYPE,
+        InvocationType: Optional[SERVICE_INTEGRATION_SIMPLE_VALUE] = None,
         Qualifier: Optional[SERVICE_INTEGRATION_SIMPLE_VALUE] = None,
         Pattern: IntegrationPattern = IntegrationPattern.REQUEST_RESPONSE,
     ): ...

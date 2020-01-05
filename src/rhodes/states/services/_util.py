@@ -38,7 +38,7 @@ def service_integration(*options: IntegrationPattern) -> Callable[[StateMirror],
 
         def _build_task(instance) -> Task:
             task_fields = [field.name for field in attr.fields(Task)]
-            field_name_blacklist = ("Pattern", "Parameters")
+            field_name_blacklist = ("Pattern",)
             resource_name = instance._resource_name.value + instance.Pattern.value
 
             task_kwargs = {}
@@ -52,7 +52,7 @@ def service_integration(*options: IntegrationPattern) -> Callable[[StateMirror],
                 if value is None:
                     continue
 
-                if field.name in task_fields:
+                if field.name in task_fields and field.name != "Parameters":
                     task_kwargs[field.name] = value
                 else:
                     parameters_kwargs[field.name] = value
