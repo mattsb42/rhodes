@@ -1,7 +1,7 @@
 """Common types used throughout Rhodes for use during static analysis."""
 # I'm using types as constants, so pylint: disable=invalid-name
 from enum import Enum
-from typing import Any, Optional, TypeVar, Union
+from typing import Any, Dict, Optional, TypeVar, Union
 
 import jsonpath_rw
 from troposphere import AWSHelperFn, awslambda, stepfunctions
@@ -35,5 +35,5 @@ HEARTBEAT_SECONDS = Optional[int]
 TASK_RESOURCE = Union[ServiceArn, str, awslambda.Function, stepfunctions.Activity, AWSHelperFn]
 
 SERVICE_INTEGRATION_SIMPLE_VALUE = Union[str, JsonPath, Enum, AWSHelperFn]
-SERVICE_INTEGRATION_COMPLEX_VALUE = Union[JsonPath, Enum, AWSHelperFn, Parameters]
+SERVICE_INTEGRATION_COMPLEX_VALUE = Union[JsonPath, Enum, AWSHelperFn, Parameters, Dict]
 AWS_LAMBDA_FUNCTION = Union[str, JsonPath, Enum, AWSHelperFn, awslambda.Function]

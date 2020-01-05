@@ -1,0 +1,42 @@
+Description: Creates an IAM user with the permissions needed to run Rhodes integration tests.
+
+Resources:
+    Policy:
+        Type: AWS::IAM::ManagedPolicy
+        Properties:
+            PolicyDocument:
+                Version: 2012-10-17
+                Statement:
+                    -   Effect: Allow
+                        Action:
+                            - states:CreateStateMachine
+                            - states:TagResource
+                        Resource:
+                            - !Sub "arn:${AWS::Partition}:states:${AWS::Region}:${AWS::AccountId}:stateMachine:*"
+                        Condition:
+                            # This exact tag and value MUST be provided
+                            StringEquals:
+                                "aws:RequestTag/rhodes": integration test
+                    -   Effect: Allow
+                        Action:
+                            - states:DeleteStateMachine
+                        Resource:
+                            # Restrict to the state machine name prefix that we set for integ test state machines
+                            - !Sub "arn:${AWS::Partition}:states:${AWS::Region}:${AWS::AccountId}:stateMachine:rhodes-integ-*"
+                    -   Effect: Allow
+                        Action:
+                            - iam:PassRole
+                        Resource:
+                            - !Sub "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/*"
+                        Condition:
+                            StringEquals:
+                                "iam:PassedToService": states.amazonaws.com
+    User:
+        Type: AWS::IAM::User
+        Properties:
+            ManagedPolicyArns:
+                - !Ref Policy
+            PermissionsBoundary: !Ref Policy
+            Tags:
+                -   Key: rhodes
+                    Value: integration test
