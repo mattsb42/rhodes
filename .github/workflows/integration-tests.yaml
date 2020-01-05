@@ -16,6 +16,8 @@ jobs:
                     - ubuntu-latest
                 python:
                     - 3.x
+                architecture:
+                    - x64
                 category:
                     - integ
         steps:
@@ -23,6 +25,7 @@ jobs:
             -   uses: actions/setup-python@v1
                 with:
                     python-version: ${{ matrix.python }}
+                    architecture: ${{ matrix.architecture }}
             -   uses: aws-actions/configure-aws-credentials@v1
                 with:
                     aws-access-key-id: ${{ secrets.INTEG_AWS_ACCESS_KEY_ID }}
