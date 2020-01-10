@@ -1,0 +1,16 @@
+# This workflow runs any cleanup/etc needed after a PR has been closed.
+name: pull request cleanup
+
+on:
+    pull_request:
+        types:
+            - closed
+
+jobs:
+    cleanup:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: clean up source branch
+                uses: jessfraz/branch-cleanup-action@master
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
