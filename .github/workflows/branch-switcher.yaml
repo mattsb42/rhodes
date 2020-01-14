@@ -1,37 +1,28 @@
 # This workflow takes any pull requests to maser and moves them to development.
 name: pull request router
 
-on:
-    pull_request:
-        branches:
-            - master
+on: [pull_request]
 
 jobs:
-    send to development:
+    send-to-development:
         # Move ay PRs to master that are not from development
         if: github.base_ref == 'master' && github.head_ref != 'development'
         runs-on: ubuntu-latest
         steps:
             -   name: switch branch
-                uses: actions/github-script@v0.4.0
+                uses: actions/github-script@0.4.0
                 with:
-                    github-token: ${{ secrets.GITHUB_TOKEN }}
+                    github-token: ${{ secrets.MERGE_TOKEN }}
                     script: |
                         github.pulls.update({
-                            owner: context.owner,
-                            repo: context.repo,
-                            pull_number: context.issue,
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            pull_number: context.issue.number,
                             base: 'development'
                         })
-            -   if: success()
-                name: report
-                uses: actions/github-script@v0.4.0
-                with:
-                    github-token: ${{ secrets.GITHUB_TOKEN }}
-                    script: |
                         github.issues.createComment({
-                            owner: context.owner,
-                            repo: context.repo,
-                            issue_number: context.issue,
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            issue_number: context.issue.number,
                             body: 'Moving target to development branch.'
                         })
